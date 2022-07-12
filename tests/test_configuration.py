@@ -10,8 +10,9 @@ from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.agent import SshAgentKeys
 from ssh_assets.keys.file import SSHKeyFile
 
-EXPECTED_KEY_COUNT = 2
-EXPECTED_AVAILABLE_KEY_COUNT = 1
+EXPECTED_KEY_COUNT = 3
+EXPECTED_AVAILABLE_KEY_COUNT = 2
+EXPECTED_AUTOLOAD_KEY_COUNT = 1
 
 
 def test_load_empty_config(mock_empty_config):
@@ -55,18 +56,37 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
             assert item.loaded is False
 
 
-def test_keys_file_load_pending_keys_to_agent(
+def test_keys_file_load_available_autoload_keys_to_agent(
         mock_basic_config,
         mock_agent_no_keys,
         mock_test_key_file,
         monkeypatch):
     """
-    Test call to load SSH key to agent
+    Test call to load SSH keys to agent, with autoload marked for available keys only
     """
     mock_load = MockCalledMethod()
     monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_load)
     session = SshAssetSession()
 
     # pylint: disable=no-member
-    assert len(session.configuration.keys.pending) == EXPECTED_AVAILABLE_KEY_COUNT
-    session.load_pending_keys()
+    assert len(session.configuration.keys.pending) == EXPECTED_AUTOLOAD_KEY_COUNT
+    session.load_available_keys()
+    assert mock_load.call_count == EXPECTED_AUTOLOAD_KEY_COUNT
+
+
+def test_keys_file_load_available_all_keys_to_agent(
+        mock_basic_config,
+        mock_agent_key_list,
+        mock_test_key_file,
+        monkeypatch):
+    """
+    Test call to load SSH keys to agent, with autoload marked for available keys only
+    """
+    mock_load = MockCalledMethod()
+    monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_load)
+    session = SshAssetSession()
+
+    # pylint: disable=no-member
+    assert len(session.configuration.keys.pending) == 0
+    session.load_available_keys()
+    assert mock_load.call_count == 0

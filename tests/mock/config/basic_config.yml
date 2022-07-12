@@ -5,6 +5,8 @@ keys:
   - name: Test RSA key
     path: tests/mock/keys/RFC4716/ssh_key_dsa
     autoload: true
+  - name: No autoload RSA key
+    path: tests/mock/keys/PKCS8/ssh_key_ecdsa
   - name: Missing test key
     path: tests/mock/keys/ssh_key_rsa
     autoload: true
