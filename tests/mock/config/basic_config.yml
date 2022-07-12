@@ -1,0 +1,8 @@
+#
+# Unit test configuration with basic valid details
+---
+keys:
+  - name: Test RSA key
+    path: tests/mock/keys/RFC4716/ssh_key_dsa
+  - name: Missing test key
+    path: tests/mock/keys/ssh_key_rsa
