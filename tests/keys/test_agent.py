@@ -95,6 +95,7 @@ def test_ssh_agent_keys_unload_error(mock_agent_key_list, monkeypatch):
     Test error unloading SSH keys from agent when the ssh-add command fails
     """
     mock_error = MockException(CommandError)
+    monkeypatch.setattr('ssh_assets.keys.agent.SshAgentKeys.is_available', True)
     monkeypatch.setattr('ssh_assets.session.run_command', mock_error)
     with pytest.raises(SSHKeyError):
         SshAssetSession().unload_keys()
@@ -105,6 +106,7 @@ def test_ssh_agent_keys_unload(mock_agent_key_list, monkeypatch):
     Test mocked unloading of SSH agent keys
     """
     mock_command = MockCalledMethod()
+    monkeypatch.setattr('ssh_assets.keys.agent.SshAgentKeys.is_available', True)
     monkeypatch.setattr('ssh_assets.session.run_command', mock_command)
     assert isinstance(mock_agent_key_list, list)
     assert len(mock_agent_key_list) > 0
