@@ -73,6 +73,12 @@ class SshKeyConfiguration(ConfigurationSection):
             return False
         return self.key.hash in self.__agent__
 
+    def load_to_agent(self):
+        """
+        Load configured key to SSH agent
+        """
+        self.key.load_to_agent()
+
 
 class SSHKeyListConfigurationSection(ConfigurationList):
     """
@@ -87,6 +93,13 @@ class SSHKeyListConfigurationSection(ConfigurationList):
         Return avaiable configured SSH keys
         """
         return [key for key in self if key.available]
+
+    @property
+    def pending(self):
+        """
+        Return available and autoloaded configured SSH keys not yet loaded to agent
+        """
+        return [key for key in self if key.available and key.autoload and not key.loaded]
 
 
 class SshAssetsConfiguration(YamlConfiguration):

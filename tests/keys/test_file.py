@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from sys_toolkit.exceptions import CommandError
-from sys_toolkit.tests.mock import MockException, MockRunCommandLineOutput
+from sys_toolkit.tests.mock import MockCalledMethod, MockException, MockRunCommandLineOutput
 
 from ssh_assets.exceptions import SSHKeyError
 from ssh_assets.keys.base import KEY_COMPARE_ATTRIBUTES
@@ -61,3 +61,24 @@ def test_keys_file_load_error(mock_test_key_file, monkeypatch):
     obj = SSHKeyFile(mock_test_key_file)
     with pytest.raises(SSHKeyError):
         obj.__load_key_attributes__()
+
+
+def test_keys_file_load_to_agent_call(mock_test_key_file, monkeypatch):
+    """
+    Test call to load SSH key to agent
+    """
+    mock_load = MockCalledMethod()
+    monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_load)
+    SSHKeyFile(mock_test_key_file).load_to_agent()
+    assert mock_load.call_count == 1
+
+
+def test_keys_file_load_to_agent_error(mock_test_key_file, monkeypatch):
+    """
+    Test call to load SSH key to agent with errors running command
+    """
+    mock_error = MockException(CommandError)
+    monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_error)
+    with pytest.raises(SSHKeyError):
+        SSHKeyFile(mock_test_key_file).load_to_agent()
+    assert mock_error.call_count == 1

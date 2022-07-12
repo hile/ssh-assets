@@ -14,6 +14,8 @@ def validate_key(key, key_class):
     Validate some basic attributes of SSH key from agent
     """
     assert isinstance(key, key_class)
+    assert isinstance(key.__repr__(), str)
+
     for attr in KEY_COMPARE_ATTRIBUTES:
         assert hasattr(key, attr)
         assert getattr(key, attr) is not None

@@ -2,6 +2,8 @@
 Unit tests for ssh_assets.configuration python module
 """
 
+from sys_toolkit.tests.mock import MockCalledMethod
+
 from ssh_assets.session import SshAssetSession
 from ssh_assets.configuration import SshAssetsConfiguration, SshKeyConfiguration
 from ssh_assets.keys.constants import KeyHashAlgorithm
@@ -51,3 +53,20 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
         else:
             assert item.hash is None
             assert item.loaded is False
+
+
+def test_keys_file_load_pending_keys_to_agent(
+        mock_basic_config,
+        mock_agent_no_keys,
+        mock_test_key_file,
+        monkeypatch):
+    """
+    Test call to load SSH key to agent
+    """
+    mock_load = MockCalledMethod()
+    monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_load)
+    session = SshAssetSession()
+
+    # pylint: disable=no-member
+    assert len(session.configuration.keys.pending) == EXPECTED_AVAILABLE_KEY_COUNT
+    session.agent.load_pending_keys()

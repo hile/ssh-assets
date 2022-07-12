@@ -5,7 +5,7 @@ Classes to load SSH keys from text files
 from pathlib import Path
 
 from sys_toolkit.exceptions import CommandError
-from sys_toolkit.subprocess import run_command_lineoutput
+from sys_toolkit.subprocess import run_command, run_command_lineoutput
 
 from ..exceptions import SSHKeyError
 from .base import SSHKeyLoader
@@ -42,3 +42,12 @@ class SSHKeyFile(SSHKeyLoader):
             raise SSHKeyError('Error loading SSH key attributes: command output is empty')
 
         return self.__parse_key_info_line__(stdout[0])
+
+    def load_to_agent(self):
+        """
+        Load SSH key to agent
+        """
+        try:
+            run_command('ssh-add', str(self.path))
+        except CommandError as error:
+            raise SSHKeyError(f'Error loading key to SSH agent: {error}') from error

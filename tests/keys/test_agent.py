@@ -4,6 +4,9 @@ Unit tests for ssh_assets.keys.agent module
 
 import pytest
 
+from sys_toolkit.exceptions import CommandError
+from sys_toolkit.tests.mock import MockCalledMethod, MockException
+
 from ssh_assets.exceptions import SSHKeyError
 from ssh_assets.session import SshAssetSession
 from ssh_assets.keys.agent import AgentKey
@@ -77,3 +80,38 @@ def test_ssh_agent_keys_list(mock_agent_key_list):
 
     for key in session.agent:
         validate_key(key, key_class=AgentKey)
+
+
+def test_ssh_agent_keys_unload_no_agent_socket(mock_agent_dummy_env):
+    """
+    Test error unloading SSH keys from agent when socket is not configured
+    """
+    with pytest.raises(SSHKeyError):
+        SshAssetSession().agent.unload_keys()
+
+
+def test_ssh_agent_keys_unload_error(mock_agent_key_list, monkeypatch):
+    """
+    Test error unloading SSH keys from agent when the ssh-add command fails
+    """
+    mock_error = MockException(CommandError)
+    monkeypatch.setattr('ssh_assets.keys.agent.run_command', mock_error)
+    with pytest.raises(SSHKeyError):
+        SshAssetSession().agent.unload_keys()
+
+
+def test_ssh_agent_keys_unload(mock_agent_key_list, monkeypatch):
+    """
+    Test mocked unloading of SSH agent keys
+    """
+    mock_command = MockCalledMethod()
+    monkeypatch.setattr('ssh_assets.keys.agent.run_command', mock_command)
+    assert isinstance(mock_agent_key_list, list)
+    assert len(mock_agent_key_list) > 0
+    session = SshAssetSession()
+    assert len(session.agent) == len(mock_agent_key_list)
+
+    session.agent.unload_keys()
+    assert mock_command.call_count == 1
+    args = mock_command.args[0]
+    assert args == ('ssh-add', '-D')

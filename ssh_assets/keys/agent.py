@@ -9,7 +9,7 @@ from pathlib import Path
 
 from sys_toolkit.collection import CachedMutableSequence
 from sys_toolkit.exceptions import CommandError
-from sys_toolkit.subprocess import run_command_lineoutput
+from sys_toolkit.subprocess import run_command, run_command_lineoutput
 
 from ..exceptions import SSHKeyError
 
@@ -30,6 +30,9 @@ class AgentKey(SSHKeyLoader):
         self.line = line
         self.__parse_key_info_line__(line)
 
+    def __repr__(self):
+        return self.line
+
     def __load_key_attributes__(self):
         """
         This method is not required for agent keys, because the key data is provided
@@ -47,6 +50,13 @@ class SshAgentKeys(CachedMutableSequence):
         self.hash_algorithm = hash_algorithm
 
     @property
+    def agent_socket_path(self):
+        """
+        Return SSH agent socket path from environment variable
+        """
+        return os.environ.get(SSH_AUTH_SOCK_ENV_VAR, None)
+
+    @property
     def is_available(self):
         """
         Check if SSH agent is configured
@@ -55,7 +65,7 @@ class SshAgentKeys(CachedMutableSequence):
         - if the variable points to existing socket file
         - if the socket is readable and writable by current user
         """
-        path = os.environ.get(SSH_AUTH_SOCK_ENV_VAR, None)
+        path = self.agent_socket_path
         if not path:
             return False
         if not Path(path).is_socket():
@@ -84,3 +94,24 @@ class SshAgentKeys(CachedMutableSequence):
             self.append(AgentKey(line, self.hash_algorithm))
 
         self.__finish_update__()
+
+    def unload_keys(self):
+        """
+        Unload all keys from SSH agent
+        """
+        if not self.is_available:
+            raise SSHKeyError('SSH agent is not configured')
+
+        try:
+            run_command('ssh-add', '-D')
+            self.clear()
+        except CommandError as error:
+            raise SSHKeyError(f'Error unloading SSH keys from agent: {error}') from error
+
+    def load_pending_keys(self):
+        """
+        Load any available configured keys not yet loaded to the agent
+        """
+        for configured_key in self.session.configuration.keys.pending:
+            configured_key.load_to_agent()
+        self.update()
