@@ -15,7 +15,7 @@ from sys_toolkit.tests.mock import (
 
 import pytest
 
-from ssh_assets.keys.constants import SSH_AUTH_SOCK_ENV_VAR
+from ssh_assets.keys.constants import SSH_AUTH_SOCK_ENV_VAR, SSH_AGENT_NO_KEYS_MESSAGE
 
 MOCK_DATA = Path(__file__).parent.joinpath('mock')
 MOCK_BASIC_CONFIG = MOCK_DATA.joinpath('config/basic_config.yml')
@@ -38,7 +38,7 @@ def mock_empty_config(monkeypatch):
     -------
     Returns loaded configuration file as pathlib.Path
     """
-    monkeypatch.setattr('ssh_assets.configuration.USER_CONFIGURATION_FILE', MOCK_EMPTY_CONFIG)
+    monkeypatch.setattr('ssh_assets.session.USER_CONFIGURATION_FILE', MOCK_EMPTY_CONFIG)
     return MOCK_EMPTY_CONFIG
 
 
@@ -53,7 +53,7 @@ def mock_basic_config(monkeypatch):
     -------
     Returns loaded configuration file as pathlib.Path
     """
-    monkeypatch.setattr('ssh_assets.configuration.USER_CONFIGURATION_FILE', MOCK_BASIC_CONFIG)
+    monkeypatch.setattr('ssh_assets.session.USER_CONFIGURATION_FILE', MOCK_BASIC_CONFIG)
     return MOCK_BASIC_CONFIG
 
 
@@ -108,6 +108,17 @@ def mock_agent_key_load_error(monkeypatch):
     """
     mock_error = MockException(CommandError)
     monkeypatch.setattr('ssh_assets.keys.agent.run_command_lineoutput', mock_error)
+
+
+@pytest.fixture
+def mock_agent_no_keys(monkeypatch):
+    """
+    Mock agent with no keys
+    """
+    lines = [SSH_AGENT_NO_KEYS_MESSAGE]
+    mock_keys_list = MockRunCommandLineOutput(stdout=lines)
+    monkeypatch.setattr('ssh_assets.keys.agent.run_command_lineoutput', mock_keys_list)
+    return lines
 
 
 @pytest.fixture

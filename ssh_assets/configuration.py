@@ -6,7 +6,6 @@ from sys_toolkit.configuration.base import ConfigurationList, ConfigurationSecti
 from sys_toolkit.configuration.yaml import YamlConfiguration
 
 from .keys.file import SSHKeyFile
-from .constants import USER_CONFIGURATION_FILE
 
 
 class SshKeyConfiguration(ConfigurationSection):
@@ -33,6 +32,47 @@ class SshKeyConfiguration(ConfigurationSection):
     def __repr__(self):
         return str(self.name) if self.name else ''
 
+    @property
+    def __agent__(self):
+        """
+        Return handle to the ssh_assets.keys.agent.SshAgentKeys object via session
+        """
+        return self.__parent__.__parent__.__session__.agent
+
+    @property
+    def hash_algorithm(self):
+        """
+        Return hash for key from file details if key is available
+        """
+        return self.key.hash_algorithm
+
+    @property
+    def hash(self):
+        """
+        Return hash for key from file details if key is available
+        """
+        if not self.path.is_file():
+            return None
+        return self.key.hash
+
+    @property
+    def available(self):
+        """
+        Check if this key file is available for loading to SSH agent
+        """
+        return self.path.is_file()
+
+    @property
+    def loaded(self):
+        """
+        Check if this key is loaded to the SSH agent
+
+        May fail if key file is not available
+        """
+        if not self.path.is_file():
+            return False
+        return self.key.hash in self.__agent__
+
 
 class SSHKeyListConfigurationSection(ConfigurationList):
     """
@@ -40,6 +80,13 @@ class SSHKeyListConfigurationSection(ConfigurationList):
     """
     __dict_loader_class__ = SshKeyConfiguration
     __name__ = 'keys'
+
+    @property
+    def available(self):
+        """
+        Return avaiable configured SSH keys
+        """
+        return [key for key in self if key.available]
 
 
 class SshAssetsConfiguration(YamlConfiguration):
@@ -52,6 +99,6 @@ class SshAssetsConfiguration(YamlConfiguration):
         SSHKeyListConfigurationSection,
     )
 
-    def __init__(self, path=None, parent=None, debug_enabled=False, silent=False):
-        path = path if path is not None else USER_CONFIGURATION_FILE
+    def __init__(self, session, path=None, parent=None, debug_enabled=False, silent=False):
+        self.__session__ = session
         super().__init__(path=path, parent=parent, debug_enabled=debug_enabled, silent=silent)

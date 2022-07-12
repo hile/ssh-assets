@@ -14,7 +14,11 @@ from sys_toolkit.subprocess import run_command_lineoutput
 from ..exceptions import SSHKeyError
 
 from .base import SSHKeyLoader
-from .constants import DEFAULT_KEY_HASH_ALGORITHM, SSH_AUTH_SOCK_ENV_VAR
+from .constants import (
+    DEFAULT_KEY_HASH_ALGORITHM,
+    SSH_AUTH_SOCK_ENV_VAR,
+    SSH_AGENT_NO_KEYS_MESSAGE,
+)
 
 
 class AgentKey(SSHKeyLoader):
@@ -38,7 +42,8 @@ class SshAgentKeys(CachedMutableSequence):
     """
     Class to list, load and flush keys from ssh agent
     """
-    def __init__(self, hash_algorithm=DEFAULT_KEY_HASH_ALGORITHM):
+    def __init__(self, session, hash_algorithm=DEFAULT_KEY_HASH_ALGORITHM):
+        self.session = session
         self.hash_algorithm = hash_algorithm
 
     @property
@@ -62,11 +67,18 @@ class SshAgentKeys(CachedMutableSequence):
         Update list of keys loaded to the ssh agent
         """
         self.__start_update__()
+        self.__items__ = []
         try:
-            stdout, _stderr = run_command_lineoutput('ssh-add', '-E', self.hash_algorithm.value, '-l')
+            stdout, _stderr = run_command_lineoutput(
+                'ssh-add', '-E', self.hash_algorithm.value, '-l',
+                expected_return_codes=(0, 1)
+            )
         except CommandError as error:
             self.__reset__()
             raise SSHKeyError(f'Error listing SSH keys loaded to ssh-agent: {error}') from error
+
+        if len(stdout) == 1 and stdout[0] == SSH_AGENT_NO_KEYS_MESSAGE:
+            stdout = []
 
         for line in stdout:
             self.append(AgentKey(line, self.hash_algorithm))

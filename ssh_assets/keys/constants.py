@@ -16,3 +16,4 @@ class KeyHashAlgorithm(Enum):
 DEFAULT_KEY_HASH_ALGORITHM = KeyHashAlgorithm.SHA_256
 
 SSH_AUTH_SOCK_ENV_VAR = 'SSH_AUTH_SOCK'
+SSH_AGENT_NO_KEYS_MESSAGE = 'The agent has no identities.'
