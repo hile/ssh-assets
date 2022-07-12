@@ -13,6 +13,17 @@ This library can:
 - load and unload keys to the agent based on custom configuration file, without asking key password
   if the key was already loaded
 
+## Using the CLI tool
+
+This package installs command line utility `ssh-assets`. The tool currently has
+only one command `load-keys` that can be used to load the keys configured in
+the assets configuration file as shown below.
+
+With no arguments `ssh-assets load keys` command loads configured keys that are
+nto yet loaded to the agent and that have `autoload` set to true. If `--all` is
+added to the arguments, all available key files are loaded regardless of
+`autoload` value.
+
 ## SSH assets configuration file
 
 This module uses configuration file `~/.ssh/assets.yml` to define paths to the
