@@ -9,7 +9,7 @@ from pathlib import Path
 
 from sys_toolkit.collection import CachedMutableSequence
 from sys_toolkit.exceptions import CommandError
-from sys_toolkit.subprocess import run_command, run_command_lineoutput
+from sys_toolkit.subprocess import run_command_lineoutput
 
 from ..exceptions import SSHKeyError
 
@@ -94,24 +94,3 @@ class SshAgentKeys(CachedMutableSequence):
             self.append(AgentKey(line, self.hash_algorithm))
 
         self.__finish_update__()
-
-    def unload_keys(self):
-        """
-        Unload all keys from SSH agent
-        """
-        if not self.is_available:
-            raise SSHKeyError('SSH agent is not configured')
-
-        try:
-            run_command('ssh-add', '-D')
-            self.clear()
-        except CommandError as error:
-            raise SSHKeyError(f'Error unloading SSH keys from agent: {error}') from error
-
-    def load_pending_keys(self):
-        """
-        Load any available configured keys not yet loaded to the agent
-        """
-        for configured_key in self.session.configuration.keys.pending:
-            configured_key.load_to_agent()
-        self.update()

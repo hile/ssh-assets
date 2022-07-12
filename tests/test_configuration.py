@@ -69,4 +69,4 @@ def test_keys_file_load_pending_keys_to_agent(
 
     # pylint: disable=no-member
     assert len(session.configuration.keys.pending) == EXPECTED_AVAILABLE_KEY_COUNT
-    session.agent.load_pending_keys()
+    session.load_pending_keys()
