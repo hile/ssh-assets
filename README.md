@@ -19,10 +19,19 @@ This package installs command line utility `ssh-assets`. The tool currently has
 only one command `load-keys` that can be used to load the keys configured in
 the assets configuration file as shown below.
 
-With no arguments `ssh-assets load keys` command loads configured keys that are
-nto yet loaded to the agent and that have `autoload` set to true. If `--all` is
-added to the arguments, all available key files are loaded regardless of
-`autoload` value.
+Following command loads any keys not yet loaded to the agent, but limits this
+to the keys with `autoload` property set to `true`:
+
+```bash
+ssh-assets load-keys
+```
+
+Following command loads all available keys not yet loaded to the agent,
+ignoring value of `autoload` flag:
+
+```bash
+ssh-assets load-keys --all
+```
 
 ## SSH assets configuration file
 
