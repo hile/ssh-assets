@@ -2,7 +2,21 @@
 CLI 'ssh-assets' subcommand 'load-keys'
 """
 
+from ssh_assets.constants import USER_CONFIGURATION_FILE
+
 from ..base import SshAssetsCommand
+
+USAGE = f"""Load configured SSH keys
+
+This command can be used to load SSH keys configured in the SSH assets
+configuration file {USER_CONFIGURATION_FILE} to SSH user's keyring.
+
+If --all is not specified, keys configured to autoload are loaded. If --all
+is specified, all keys in the configuration file are loaded.
+
+Unlike normal ssh-agent, the loaded keys in keyring are detected by the key
+checksum and are skipped if the key was already loaded to the ssh agent.
+"""
 
 
 class LoadKeysCommand(SshAssetsCommand):
@@ -10,6 +24,7 @@ class LoadKeysCommand(SshAssetsCommand):
     Subcommand to load SSH keys to agent
     """
     name = 'load-keys'
+    usage = USAGE
 
     def register_parser_arguments(self, parser):
         """
