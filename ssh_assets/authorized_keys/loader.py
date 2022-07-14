@@ -9,7 +9,7 @@ from sys_toolkit.collection import CachedMutableSequence
 
 from ..exceptions import SSHKeyError
 
-from .constants import KEY_TYPES
+from .constants import DEFAULT_AUTHORIZED_KEYS_FILE, KEY_TYPES
 from .options import parse_option_flag
 
 
@@ -79,7 +79,7 @@ class AuthorizedKeys(CachedMutableSequence):
     """
     List of OpenSSH authorized keys items
     """
-    def __init__(self, path):
+    def __init__(self, path=DEFAULT_AUTHORIZED_KEYS_FILE):
         super().__init__()
         self.path = Path(path).expanduser().resolve()
 
