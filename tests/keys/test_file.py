@@ -9,6 +9,7 @@ import pytest
 from sys_toolkit.exceptions import CommandError
 from sys_toolkit.tests.mock import MockCalledMethod, MockException, MockRunCommandLineOutput
 
+from ssh_assets.authorized_keys.public_key import PublicKey
 from ssh_assets.exceptions import SSHKeyError
 from ssh_assets.keys.base import KEY_COMPARE_ATTRIBUTES
 from ssh_assets.keys.constants import KeyHashAlgorithm
@@ -31,6 +32,16 @@ def test_keys_file_load(mock_test_key_file):
     assert isinstance(obj.__repr__(), str)
     assert obj.__key_attributes__ != {}
 
+    if obj.path.suffix != '.pub':
+        assert isinstance(obj.public_key_file_path, Path)
+        assert obj.has_public_key_file is True
+        assert isinstance(obj.public_key, PublicKey)
+    else:
+        assert obj.public_key_file_path is None
+        assert obj.has_public_key_file is False
+        with pytest.raises(SSHKeyError):
+            obj.public_key  # pylint: disable=pointless-statement
+
 
 def test_keys_file_load_missing_file(tmpdir):
     """
@@ -39,6 +50,11 @@ def test_keys_file_load_missing_file(tmpdir):
     path = Path(tmpdir.strpath).joinpath('ssh_key_file_missing')
     with pytest.raises(SSHKeyError):
         SSHKeyFile(path).__load_key_attributes__()
+
+    with pytest.raises(SSHKeyError):
+        SSHKeyFile(path).generate_public_key_file()
+    with pytest.raises(SSHKeyError):
+        SSHKeyFile(path).generate_public_key_file()
 
 
 def test_keys_file_load_empty_output(mock_test_key_file, monkeypatch):
