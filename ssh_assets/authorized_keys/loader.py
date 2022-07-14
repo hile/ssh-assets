@@ -11,6 +11,7 @@ from .constants import KEY_TYPES
 from .options import parse_option_flag
 
 
+# pylint: disable=too-few-public-methods
 class AuthorizedKeyEntry:
     """
     Entry in OpenSSH authorized keys file
@@ -22,7 +23,8 @@ class AuthorizedKeyEntry:
     def __repr__(self) -> str:
         return self.line
 
-    def __parse_options__(self, option_fields):
+    @staticmethod
+    def __parse_options__(option_fields):
         """
         Parse options from specified option string
         """
@@ -52,8 +54,8 @@ class AuthorizedKeyEntry:
                     base64 = fields[index + 1]
                     comment = ' '.join(fields[index + 2:])
                     break
-                except IndexError:
-                    raise SSHKeyError(f'Invalid authorized keys line')
+                except IndexError as error:
+                    raise SSHKeyError(f'Invalid authorized keys line: {line}') from error
             option_fields.append(field)
 
         options = self.__parse_options__(option_fields)

@@ -6,6 +6,7 @@ import re
 
 from operator import ge, gt, le, lt
 
+from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
 from .constants import AUTHRORIZED_KEYS_OPTION_FLAGS, AUTHRORIZED_KEYS_OPTION_VALUE_FLAGS
 
@@ -20,10 +21,13 @@ RE_OPTION_WITH_VALUE = (
 )
 
 
-class AuthorizedKeyOptionFlag:
+# pylint: disable=too-few-public-methods
+class AuthorizedKeyOptionFlag(RichComparisonObject):
     """
     Flag without value in authorized keys options
     """
+    __compare_attributes__ = ('option',)
+
     def __init__(self, option):
         if option not in AUTHRORIZED_KEYS_OPTION_FLAGS:
             raise SSHKeyError(f'Unexpected authorized-keys option flag: {option}')
@@ -32,50 +36,8 @@ class AuthorizedKeyOptionFlag:
     def __repr__(self):
         return f'{self.option}'
 
-    def __eq__(self, other):
-        if isinstance(other, str):
-            return self.option == other
-        if not hasattr(other, 'option'):
-            raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-        return self.option == getattr(other, 'option', None)
 
-    def __ne__(self, other):
-        if isinstance(other, str):
-            return self.option != other
-        if not hasattr(other, 'option'):
-            raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-        return self.option != getattr(other, 'option', None)
-
-    def __lt__(self, other):
-        if isinstance(other, str):
-            return self.option < other
-        if not hasattr(other, 'option'):
-            raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-        return self.option < getattr(other, 'option', None)
-
-    def __gt__(self, other):
-        if isinstance(other, str):
-            return self.option > other
-        if not hasattr(other, 'option'):
-            raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-        return self.option > getattr(other, 'option', None)
-
-    def __le__(self, other):
-        if isinstance(other, str):
-            return self.option <= other
-        if not hasattr(other, 'option'):
-            raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-        return self.option <= getattr(other, 'option', None)
-
-    def __ge__(self, other):
-        if isinstance(other, str):
-            return self.option >= other
-        if not hasattr(other, 'option'):
-            raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-        return self.option >= getattr(other, 'option', None)
-
-
-class AuthorizedKeyOptionValue:
+class AuthorizedKeyOptionValue(RichComparisonObject):
     """
     Option with value in authorized keys options
     """
@@ -96,30 +58,12 @@ class AuthorizedKeyOptionValue:
         """
         if isinstance(other, AuthorizedKeyOptionFlag):
             return operator(self.option, other.option)
-        if isinstance(other, str):
-            return operator(str(self), other)
-        for attr in self.__compare_attributes__:
-            a = getattr(self, attr)
-            if not hasattr(other, attr):
-                raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-            b = getattr(other, attr)
-            if a != b:
-                return operator(a, b)
-        return default
+        return super().__compare__(operator, default, other)
 
     def __eq__(self, other):
         if isinstance(other, AuthorizedKeyOptionFlag):
             return False
-        if isinstance(other, str):
-            return str(self) == other
-        for attr in self.__compare_attributes__:
-            a = getattr(self, attr)
-            if not hasattr(other, attr):
-                raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-            b = getattr(other, attr)
-            if a != b:
-                return False
-        return True
+        return super().__eq__(other)
 
     def __ne__(self, other):
         return not self.__eq__(other)

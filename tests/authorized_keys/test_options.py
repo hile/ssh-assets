@@ -35,6 +35,7 @@ def test_authorized_keys_option_attributes():
         assert isinstance(item.__repr__(), str)
 
 
+# pylint: disable=comparison-with-itself
 def validate_rich_comparisons(a, b):
     """
     Test rich comparisons two options 'a' and 'b' that sort with a before b
@@ -65,19 +66,20 @@ def validate_rich_comparison_errors(a, b):
     """
     assert a == str(b)
     with pytest.raises(TypeError):
-        a == b
+        assert a == b
     with pytest.raises(TypeError):
-        a != b
+        assert a != b
     with pytest.raises(TypeError):
-        a < b
+        assert a < b
     with pytest.raises(TypeError):
-        a > b
+        assert a > b
     with pytest.raises(TypeError):
-        a <= b
+        assert a <= b
     with pytest.raises(TypeError):
-        a >= b
+        assert a >= b
 
 
+# pylint: disable=too-few-public-methods
 class MockInvalidCompareObject:
     """
     Mock class to test comparisons with options

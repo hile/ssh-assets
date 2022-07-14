@@ -4,9 +4,9 @@ Base classes for SSH key file processing
 
 import re
 
-from operator import ge, gt, le, lt
 from pathlib import Path
 
+from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
 
 from .constants import (
@@ -34,7 +34,7 @@ KEY_STRING_ATTRIBUTES = (
 )
 
 
-class SSHKeyLoader:
+class SSHKeyLoader(RichComparisonObject):
     """
     SSH key base class
 
@@ -57,43 +57,14 @@ class SSHKeyLoader:
             return operator(self.path, other)
         if isinstance(other, str):
             return operator(self.hash, other)
-        for attr in self.__compare_attributes__:
-            a = getattr(self, attr)
-            if not hasattr(other, attr):
-                raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-            b = getattr(other, attr)
-            if a != b:
-                return operator(a, b)
-        return default
+        return super().__compare__(operator, default, other)
 
     def __eq__(self, other):
         if self.path is not None and isinstance(other, Path):
             return self.path == other
         if isinstance(other, str):
             return self.hash == other
-        for attr in self.__compare_attributes__:
-            a = getattr(self, attr)
-            if not hasattr(other, attr):
-                raise TypeError(f'Comparing {type(self)} to {type(other)} is not supported')
-            b = getattr(other, attr)
-            if a != b:
-                return False
-        return True
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __lt__(self, other):
-        return self.__compare__(lt, False, other)
-
-    def __gt__(self, other):
-        return self.__compare__(gt, False, other)
-
-    def __le__(self, other):
-        return self.__compare__(le, True, other)
-
-    def __ge__(self, other):
-        return self.__compare__(ge, True, other)
+        return super().__eq__(other)
 
     def __load_key_attributes__(self):
         """
