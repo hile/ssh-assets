@@ -1,10 +1,13 @@
 """
 Unit tests for ssh_assets.configuration python module
 """
+from pathlib import Path
 
 from sys_toolkit.tests.mock import MockCalledMethod
 
 from ssh_assets.session import SshAssetSession
+from ssh_assets.authorized_keys import AuthorizedKeys
+from ssh_assets.authorized_keys.constants import DEFAULT_AUTHORIZED_KEYS_FILE
 from ssh_assets.configuration import SshAssetsConfiguration, SshKeyConfiguration
 from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.agent import SshAgentKeys
@@ -90,3 +93,6 @@ def test_keys_file_load_available_all_keys_to_agent(
     assert len(session.configuration.keys.pending) == 0
     session.load_available_keys()
     assert mock_load.call_count == 0
+
+    assert isinstance(session.user_authorized_keys, AuthorizedKeys)
+    assert session.user_authorized_keys.path == Path(DEFAULT_AUTHORIZED_KEYS_FILE).expanduser()

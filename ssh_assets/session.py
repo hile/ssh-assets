@@ -5,6 +5,7 @@ SSH assets manager session
 from sys_toolkit.exceptions import CommandError
 from sys_toolkit.subprocess import run_command
 
+from .authorized_keys import AuthorizedKeys
 from .constants import USER_CONFIGURATION_FILE
 from .configuration import SshAssetsConfiguration
 from .exceptions import SSHKeyError
@@ -31,6 +32,15 @@ class SshAssetSession:
         This is initialized separately on each call intentionally to trigger lookup for loaded keys
         """
         return SshAgentKeys(self)
+
+    @property
+    def user_authorized_keys(self):
+        """
+        Return SSH authorized keys parser object for user default authorized keys file
+
+        This is initialized separately on each call intentionally to trigger lookup for loaded keys
+        """
+        return AuthorizedKeys()
 
     def unload_keys(self):
         """
