@@ -2,6 +2,8 @@
 Unit tests for ssh_assets.keys.file module
 """
 
+import shutil
+
 from pathlib import Path
 
 import pytest
@@ -15,8 +17,41 @@ from ssh_assets.keys.base import KEY_COMPARE_ATTRIBUTES
 from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.file import SSHKeyFile
 
+from ..conftest import FILE_NO_PERMISSION, FILE_READONLY
 
-def test_keys_file_load(mock_test_key_file):
+
+def validate_public_key_processing(obj, tmpdir):
+    """
+    Validate handling of permission errors reading public key from a file
+    """
+    prefix = Path(tmpdir, 'public-keys')
+    private_key_path = prefix.joinpath(obj.path.name)
+    public_key_path = prefix.joinpath(obj.public_key_file_path.name)
+
+    prefix.mkdir(parents=True)
+    shutil.copyfile(obj.path, private_key_path)
+    shutil.copyfile(obj.public_key_file_path, public_key_path)
+
+    assert private_key_path.is_file()
+    assert public_key_path.is_file
+
+    private_key_path.chmod(FILE_READONLY)
+    public_key_path.chmod(FILE_NO_PERMISSION)
+    private_key = SSHKeyFile(private_key_path)
+    with pytest.raises(SSHKeyError):
+        private_key.public_key  # pylint: disable=pointless-statement
+
+    # Generate the public key from private key
+    public_key_path.unlink()
+    private_key.generate_public_key_file()
+    assert public_key_path.is_file()
+
+    # Run again, this will not change the file and skips generation
+    private_key.generate_public_key_file()
+    assert public_key_path.is_file()
+
+
+def test_keys_file_load(mock_test_key_file, tmpdir):
     """
     Mock loading test keys to the model
     """
@@ -36,11 +71,27 @@ def test_keys_file_load(mock_test_key_file):
         assert isinstance(obj.public_key_file_path, Path)
         assert obj.has_public_key_file is True
         assert isinstance(obj.public_key, PublicKey)
+        validate_public_key_processing(obj, tmpdir)
     else:
         assert obj.public_key_file_path is None
         assert obj.has_public_key_file is False
         with pytest.raises(SSHKeyError):
             obj.public_key  # pylint: disable=pointless-statement
+
+
+def test_keys_file_error_generating_public_key(mock_test_key_file, tmpdir):
+    """
+    Test detecting of errors when generating public key from private key to a path that is existing directory
+    """
+    filename = Path(tmpdir.strpath, 'permission_denied.txt')
+    filename.write_text('\n', encoding='utf-8')
+    filename.chmod(FILE_NO_PERMISSION)
+
+    with pytest.raises(SSHKeyError):
+        SSHKeyFile(mock_test_key_file).generate_public_key_file(tmpdir.strpath, force=True)
+
+    with pytest.raises(SSHKeyError):
+        SSHKeyFile(mock_test_key_file).generate_public_key_file(filename, force=True)
 
 
 def test_keys_file_load_missing_file(tmpdir):

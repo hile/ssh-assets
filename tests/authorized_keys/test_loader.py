@@ -11,6 +11,7 @@ import pytest
 from ssh_assets.exceptions import SSHKeyError
 from ssh_assets.authorized_keys import AuthorizedKeys
 
+from ..conftest import FILE_NO_PERMISSION
 from .constants import (
     VALID_AUTHORIZED_KEYS_FILE,
     EXPECTED_KEYS_COUNT,
@@ -43,7 +44,7 @@ def test_authorized_keys_loader_file_load_error(tmpdir):
     """
     path = Path(tmpdir.strpath, 'missing_key_file')
     shutil.copyfile(VALID_AUTHORIZED_KEYS_FILE, path)
-    path.chmod(int('0000', 8))
+    path.chmod(FILE_NO_PERMISSION)
 
     obj = AuthorizedKeys(path)
     with pytest.raises(SSHKeyError):

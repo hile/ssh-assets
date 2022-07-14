@@ -24,7 +24,9 @@ MOCK_EMPTY_CONFIG = MOCK_DATA.joinpath('config/empty_config.yml')
 MOCK_AGENT_OUTPUT = MOCK_DATA.joinpath('keys/agent.txt')
 MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
 
-PERM_READWRITE = int('0640', 8)
+FILE_READONLY = int('0400', 8)
+FILE_NO_PERMISSION = int('0000', 8)
+FILE_READWRITE = int('0640', 8)
 
 
 @pytest.fixture
@@ -97,7 +99,7 @@ def mock_agent_dummy_socket(mock_agent_dummy_env):
     print(mock_agent_dummy_env)
     agent_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     agent_socket.bind(str(mock_agent_dummy_env))
-    mock_agent_dummy_env.chmod(PERM_READWRITE)
+    mock_agent_dummy_env.chmod(FILE_READWRITE)
     return agent_socket
 
 

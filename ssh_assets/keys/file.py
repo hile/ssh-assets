@@ -104,7 +104,10 @@ class SSHKeyFile(SSHKeyLoader):
                 stdout, _stderr = run_command_lineoutput('ssh-keygen', '-y', '-f', str(self.path))
             except CommandError as error:
                 raise SSHKeyError(f'Error exporting public key file from {self.path}: {error}') from error
-            with filename.open('w', encoding='utf-8') as handle:
-                data = '\n'.join(stdout)
-                handle.write(f'{data}\n')
+            try:
+                with filename.open('w', encoding='utf-8') as handle:
+                    data = '\n'.join(stdout)
+                    handle.write(f'{data}\n')
+            except OSError as error:
+                raise SSHKeyError(f'Error exporting public key file to {filename}: {error}') from error
         return filename
