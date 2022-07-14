@@ -47,7 +47,7 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
     for item in configured_keys:
         assert isinstance(item, SshKeyConfiguration)
         assert isinstance(item.__repr__(), str)
-        assert isinstance(item.key, SSHKeyFile)
+        assert isinstance(item.private_key, SSHKeyFile)
         assert isinstance(item.hash_algorithm, KeyHashAlgorithm)
         assert isinstance(item.__agent__, SshAgentKeys)
 

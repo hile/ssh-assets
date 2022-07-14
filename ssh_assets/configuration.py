@@ -27,7 +27,7 @@ class SshKeyConfiguration(ConfigurationSection):
 
     def __init__(self, data=dict, parent=None, debug_enabled=False, silent=False):
         super().__init__(data, parent, debug_enabled, silent)
-        self.key = SSHKeyFile(self.path)
+        self.private_key = SSHKeyFile(self.path)
 
     def __repr__(self):
         return str(self.name) if self.name else ''
@@ -44,7 +44,7 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         Return hash for key from file details if key is available
         """
-        return self.key.hash_algorithm
+        return self.private_key.hash_algorithm
 
     @property
     def hash(self):
@@ -53,7 +53,7 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         if not self.path.is_file():
             return None
-        return self.key.hash
+        return self.private_key.hash
 
     @property
     def available(self):
@@ -71,13 +71,13 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         if not self.path.is_file():
             return False
-        return self.key.hash in self.__agent__
+        return self.private_key.hash in self.__agent__
 
     def load_to_agent(self):
         """
         Load configured key to SSH agent
         """
-        self.key.load_to_agent()
+        self.private_key.load_to_agent()
 
 
 class SSHKeyListConfigurationSection(ConfigurationList):
