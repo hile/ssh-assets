@@ -4,6 +4,7 @@ SSH keys public key entry in user authorized keys files and exported .pub files
 
 from base64 import b64decode
 
+from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
 
 from .constants import KEY_TYPES
@@ -11,10 +12,12 @@ from .options import parse_option_flag
 
 
 # pylint: disable=too-few-public-methods
-class PublicKey:
+class PublicKey(RichComparisonObject):
     """
     Entry in OpenSSH authorized keys file
     """
+    __compare_attributes__ = ('key_type', 'base64',)
+
     def __init__(self, line):
         self.line = line
         self.key_type, self.base64, self.options, self.comment = self.__parse_line__(line)
