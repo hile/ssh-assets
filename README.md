@@ -1,4 +1,4 @@
-![example workflow](https://github.com/hile/ssh-assets/actions/workflows/main/badge.svg)
+![CI pipeline](https://github.com/hile/ssh-assets/actions/workflows/main.yml/badge.svg)
 
 # SSH assets python library
 
