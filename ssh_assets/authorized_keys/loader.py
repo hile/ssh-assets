@@ -1,6 +1,8 @@
 """
 Class to load OpenSSH authorized keys files
 """
+
+from base64 import b64decode
 from pathlib import Path
 
 from sys_toolkit.collection import CachedMutableSequence
@@ -22,6 +24,16 @@ class AuthorizedKeyEntry:
 
     def __repr__(self) -> str:
         return self.line
+
+    def __validate_base64__(self, base64_value):
+        """
+        Validate the base64 encoded public key value in data is actually valid base64 data
+        """
+        try:
+            b64decode(base64_value)
+        except ValueError as error:
+            raise SSHKeyError(f'Error parsing {self.line}: invalid base64 encoded public key') from error
+        return base64_value
 
     @staticmethod
     def __parse_options__(option_fields):
@@ -51,7 +63,7 @@ class AuthorizedKeyEntry:
             if field in KEY_TYPES:
                 try:
                     key_type = field
-                    base64 = fields[index + 1]
+                    base64 = self.__validate_base64__(fields[index + 1])
                     comment = ' '.join(fields[index + 2:])
                     break
                 except IndexError as error:

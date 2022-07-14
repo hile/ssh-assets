@@ -19,7 +19,9 @@ VALID_AUTHORIZED_KEYS_FILE = MOCK_DATA.joinpath('authorized_keys/valid.txt')
 EXPECTED_KEYS_COUNT = 8
 
 INVALID_ENTRY = 'AAAAC3NzaC1lZDI1NTE5AAAAIJwd1cg2Uusi9BXiNP041Mav4/WBdHPxuALr1iYzUT21 info@example.net'
+INVALID_BASE64_ENTRY = 'pty ssh-ed25519 info@example.net'
 INVALID_FORMAT_ENTRY = 'AAAAC3NzaC1lZDI1NTE5AAAAIJwd1cg2Uusi9BXiNP041Mav4 ssh-rsa'
+
 VALID_ENTRY = 'pty ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJwd1cg2Uusi9BXiNP041Mav4/WBdHPxuALr1iYzUT21 info@example.net'
 
 
@@ -31,12 +33,20 @@ def test_authorized_keys_parser_invalid_missing_key_type():
         AuthorizedKeyEntry(INVALID_ENTRY)
 
 
-def test_authorized_keys_parser_invalid_missing_base64_hash():
+def test_authorized_keys_parser_missing_base64_hash():
     """
     Test parser for trivial, invalid entry in SSH keys: missing base64 hash after key type
     """
     with pytest.raises(SSHKeyError):
         AuthorizedKeyEntry(INVALID_FORMAT_ENTRY)
+
+
+def test_authorized_keys_parser_invalid_base64_hash():
+    """
+    Test parser for trivial, invalid entry in SSH keys: base64 hash value is invalid
+    """
+    with pytest.raises(SSHKeyError):
+        AuthorizedKeyEntry(INVALID_BASE64_ENTRY)
 
 
 def test_authorized_keys_parser_valid_entry():
