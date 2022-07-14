@@ -1,3 +1,5 @@
+![example workflow](https://github.com/hile/ssh-assets/actions/workflows/main/badge.svg)
+
 # SSH assets python library
 
 This little utility allows configuring SSH keys to be loaded automatically to
