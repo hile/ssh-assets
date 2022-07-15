@@ -26,5 +26,8 @@ class ListKeysCommand(SshAssetsCommand):
         """
         List the keys in asset configuration file
         """
-        for item in self.session.configuration.keys:
+        configured_keys = self.session.configuration.keys  # pylint: disable=no-member
+        if not configured_keys:
+            self.exit(1, 'No keys are configured in the SSH assets configuration file')
+        for item in configured_keys:
             print(item.private_key)

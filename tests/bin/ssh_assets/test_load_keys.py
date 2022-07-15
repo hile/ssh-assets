@@ -1,5 +1,5 @@
 """
-Unit tests for ssh-assets main CLI class
+Unit tests for 'ssh-assets load-keys' CLI command
 """
 
 from sys_toolkit.tests.mock import MockCalledMethod

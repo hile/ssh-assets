@@ -20,6 +20,7 @@ from ssh_assets.keys.constants import SSH_AUTH_SOCK_ENV_VAR, SSH_AGENT_NO_KEYS_M
 MOCK_DATA = Path(__file__).parent.joinpath('mock')
 MOCK_BASIC_CONFIG = MOCK_DATA.joinpath('config/basic_config.yml')
 MOCK_EMPTY_CONFIG = MOCK_DATA.joinpath('config/empty_config.yml')
+MOCK_BASIC_CONFIG_KEYS_COUNT = 3
 
 MOCK_AGENT_OUTPUT = MOCK_DATA.joinpath('keys/agent.txt')
 MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
@@ -27,6 +28,39 @@ MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
 FILE_READONLY = int('0400', 8)
 FILE_NO_PERMISSION = int('0000', 8)
 FILE_READWRITE = int('0640', 8)
+
+
+INVALID_DURATION_VALUES = (
+    None,
+    '',
+    'd20',
+    '10y',
+    '2d10s3d',
+    '0d',
+    '-10s',
+)
+VALID_DURATION_VALUES = (
+    600,
+    '600',
+    '30s',
+    '2w1d20s',
+)
+
+
+@pytest.fixture(params=INVALID_DURATION_VALUES)
+def invalid_duration_value(request):
+    """
+    Test fixture to get a list of invalid duration values
+    """
+    yield request.param
+
+
+@pytest.fixture(params=VALID_DURATION_VALUES)
+def valid_duration_value(request):
+    """
+    Test fixture to get a list of valid duration values
+    """
+    yield request.param
 
 
 @pytest.fixture
