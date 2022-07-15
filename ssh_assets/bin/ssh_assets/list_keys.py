@@ -4,7 +4,7 @@ CLI 'ssh-assets' subcommand 'list-keys'
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from ..base import SshAssetsCommand
+from ..base import SshKeysCommand
 
 USAGE = """List configured SSH keys
 """
@@ -14,7 +14,7 @@ configuration file {USER_CONFIGURATION_FILE}.
 """
 
 
-class ListKeysCommand(SshAssetsCommand):
+class ListKeysCommand(SshKeysCommand):
     """
     Subcommand to list configured SSH keys
     """
@@ -26,8 +26,12 @@ class ListKeysCommand(SshAssetsCommand):
         """
         List the keys in asset configuration file
         """
-        configured_keys = self.session.configuration.keys  # pylint: disable=no-member
-        if not configured_keys:
-            self.exit(1, 'No keys are configured in the SSH assets configuration file')
-        for item in configured_keys:
-            print(item.private_key)
+        keys = self.filter_keys(args)
+        if not keys:
+            if args.keys:
+                self.exit(1, 'No keys matching query arguments detected')
+            else:
+                self.exit(1, 'No keys are configured in the SSH assets configuration file')
+
+        for item in keys:
+            self.message(f'{item.name} {item.private_key}')

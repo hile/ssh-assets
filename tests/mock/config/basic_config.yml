@@ -1,12 +1,19 @@
 #
 # Unit test configuration with basic valid details
 ---
+groups:
+  - name: demo
+    expire: 1d
+    keys:
+    - test
+    - manual
+  - name: unconfigured
 keys:
-  - name: Test RSA key
+  - name: test
     path: tests/mock/keys/RFC4716/ssh_key_dsa
     autoload: true
-  - name: No autoload RSA key
+  - name: manual
     path: tests/mock/keys/PKCS8/ssh_key_ecdsa
-  - name: Missing test key
+  - name: missing
     path: tests/mock/keys/ssh_key_rsa
     autoload: true

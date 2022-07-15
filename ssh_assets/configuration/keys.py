@@ -1,11 +1,9 @@
 """
-Configuration file processing for SSH assets utility
+Configuration parser for 'keys' configuration section in SSH assets configuration
 """
 
 from sys_toolkit.configuration.base import ConfigurationList, ConfigurationSection
-from sys_toolkit.configuration.yaml import YamlConfiguration
-
-from .keys.file import SSHKeyFile
+from ..keys.file import SSHKeyFile
 
 
 class SshKeyConfiguration(ConfigurationSection):
@@ -80,9 +78,9 @@ class SshKeyConfiguration(ConfigurationSection):
         self.private_key.load_to_agent()
 
 
-class SSHKeyListConfigurationSection(ConfigurationList):
+class SshKeyListConfigurationSection(ConfigurationList):
     """
-    Configuration section for SSH key usage
+    Configuration section for SSH keys list
     """
     __dict_loader_class__ = SshKeyConfiguration
     __name__ = 'keys'
@@ -100,18 +98,3 @@ class SSHKeyListConfigurationSection(ConfigurationList):
         Return available and autoloaded configured SSH keys not yet loaded to agent
         """
         return [key for key in self if key.available and key.autoload and not key.loaded]
-
-
-class SshAssetsConfiguration(YamlConfiguration):
-    """
-    SSH assets configuration
-
-    User configuration for ssh assets processing python module
-    """
-    __section_loaders__ = (
-        SSHKeyListConfigurationSection,
-    )
-
-    def __init__(self, session, path=None, parent=None, debug_enabled=False, silent=False):
-        self.__session__ = session
-        super().__init__(path=path, parent=parent, debug_enabled=debug_enabled, silent=silent)

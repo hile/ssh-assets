@@ -4,7 +4,7 @@ CLI 'ssh-assets' subcommand 'load-keys'
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from ..base import SshAssetsCommand
+from ..base import SshKeysCommand
 
 USAGE = f"""Load configured SSH keys
 
@@ -19,7 +19,7 @@ checksum and are skipped if the key was already loaded to the ssh agent.
 """
 
 
-class LoadKeysCommand(SshAssetsCommand):
+class LoadKeysCommand(SshKeysCommand):
     """
     Subcommand to load SSH keys to agent
     """

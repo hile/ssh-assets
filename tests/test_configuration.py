@@ -8,7 +8,9 @@ from sys_toolkit.tests.mock import MockCalledMethod
 from ssh_assets.session import SshAssetSession
 from ssh_assets.authorized_keys import AuthorizedKeys
 from ssh_assets.authorized_keys.constants import DEFAULT_AUTHORIZED_KEYS_FILE
-from ssh_assets.configuration import SshAssetsConfiguration, SshKeyConfiguration
+from ssh_assets.configuration import SshAssetsConfiguration
+from ssh_assets.configuration.groups import GroupConfiguration
+from ssh_assets.configuration.keys import SshKeyConfiguration
 from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.agent import SshAgentKeys
 from ssh_assets.keys.file import SSHKeyFile
@@ -37,12 +39,19 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
     assert session.configuration.__path__ == mock_basic_config
 
     # pylint: disable=no-member
+    configured_groups = session.configuration.groups
+    # pylint: disable=no-member
     configured_keys = session.configuration.keys
     assert len(configured_keys) == EXPECTED_KEY_COUNT
 
     for key in configured_keys.available:
         print(key.path)
     assert len(configured_keys.available) == EXPECTED_AVAILABLE_KEY_COUNT
+
+    for item in configured_groups:
+        assert isinstance(item, GroupConfiguration)
+        assert isinstance(item.__repr__(), str)
+        assert isinstance(item.name, str)
 
     for item in configured_keys:
         assert isinstance(item, SshKeyConfiguration)
