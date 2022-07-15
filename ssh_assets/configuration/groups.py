@@ -24,6 +24,20 @@ class GroupConfiguration(ConfigurationSection):
     def __repr__(self):
         return self.name if self.name else ''
 
+    @property
+    def __key_configuration__(self):
+        """
+        Return reference to the key configuration section
+        """
+        return self.__parent__.__parent__.keys  # pylint: disable=no-member
+
+    @property
+    def private_keys(self):
+        """
+        Return private key configuration items matching this group
+        """
+        return [key for key in self.__key_configuration__ if key.name in self.keys]
+
 
 class GroupListConfigurationSection(ConfigurationList):
     """

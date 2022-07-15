@@ -38,6 +38,13 @@ class SshKeyConfiguration(ConfigurationSection):
         return self.__parent__.__parent__.__session__.agent
 
     @property
+    def __group_configuration__(self):
+        """
+        Return reference to the groups configuration section
+        """
+        return self.__parent__.__parent__.groups  # pylint: disable=no-member
+
+    @property
     def hash_algorithm(self):
         """
         Return hash for key from file details if key is available
@@ -70,6 +77,13 @@ class SshKeyConfiguration(ConfigurationSection):
         if not self.path.is_file():
             return False
         return self.private_key.hash in self.__agent__
+
+    @property
+    def groups(self):
+        """
+        Return groups where this key is referenced
+        """
+        return [group for group in self.__group_configuration__ if self.name in group.keys]
 
     def load_to_agent(self):
         """

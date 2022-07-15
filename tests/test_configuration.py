@@ -9,8 +9,8 @@ from ssh_assets.session import SshAssetSession
 from ssh_assets.authorized_keys import AuthorizedKeys
 from ssh_assets.authorized_keys.constants import DEFAULT_AUTHORIZED_KEYS_FILE
 from ssh_assets.configuration import SshAssetsConfiguration
-from ssh_assets.configuration.groups import GroupConfiguration
-from ssh_assets.configuration.keys import SshKeyConfiguration
+from ssh_assets.configuration.groups import GroupConfiguration, GroupListConfigurationSection
+from ssh_assets.configuration.keys import SshKeyConfiguration, SshKeyListConfigurationSection
 from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.agent import SshAgentKeys
 from ssh_assets.keys.file import SSHKeyFile
@@ -52,6 +52,8 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
         assert isinstance(item, GroupConfiguration)
         assert isinstance(item.__repr__(), str)
         assert isinstance(item.name, str)
+        assert isinstance(item.__key_configuration__, SshKeyListConfigurationSection)
+        assert isinstance(item.private_keys, list)
 
     for item in configured_keys:
         assert isinstance(item, SshKeyConfiguration)
@@ -59,6 +61,8 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
         assert isinstance(item.private_key, SSHKeyFile)
         assert isinstance(item.hash_algorithm, KeyHashAlgorithm)
         assert isinstance(item.__agent__, SshAgentKeys)
+        assert isinstance(item.__group_configuration__, GroupListConfigurationSection)
+        assert isinstance(item.groups, list)
 
         if item.available:
             assert isinstance(item.hash, str)
