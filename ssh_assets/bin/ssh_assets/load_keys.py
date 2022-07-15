@@ -43,4 +43,7 @@ class LoadKeysCommand(SshKeysCommand):
         """
         Load SSH keys to the SSH agent
         """
-        self.session.load_available_keys(load_all_keys=args.all)
+        if not args.groups and not args.keys:
+            self.session.load_available_keys(load_all_keys=args.all)
+        else:
+            self.session.load_available_keys(keys=self.filter_keys(args), load_all_keys=True)

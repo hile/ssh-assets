@@ -54,14 +54,16 @@ class SshAssetSession:
         except CommandError as error:
             raise SSHKeyError(f'Error unloading SSH keys from agent: {error}') from error
 
-    def load_available_keys(self, load_all_keys=False):
+    def load_available_keys(self, keys=None, load_all_keys=False):
         """
         Load any available configured keys
 
         If load_all_keys is False, only keys mared as autoload are loaded
         """
-        # pylint: disable=no-member
-        for configured_key in self.configuration.keys.available:
+        if not keys:
+            # pylint: disable=no-member
+            keys = self.configuration.keys.available
+        for configured_key in keys:
             if not load_all_keys and not configured_key.autoload:
                 continue
             if not configured_key.loaded:
