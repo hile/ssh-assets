@@ -10,7 +10,10 @@ from ...conftest import MOCK_BASIC_CONFIG_KEYS_COUNT
 
 KEY_NO_MATCH = 'nomatch'
 
+GROUP_MATCH_TEST = 'demo'
+GROUP_NO_GROUP = 'nogroup'
 KEY_MATCH_TEST = 'tests/mock/keys/RFC4716/ssh_key_dsa'
+KEY_MATCH_MANUAL = 'manual'
 KEY_MATCH_MISSING = 'miss*'
 
 
@@ -74,3 +77,23 @@ def test_ssh_assets_list_keys_existing(mock_basic_config, monkeypatch, capsys):
     captured = capsys.readouterr()
     assert captured.err == ''
     assert len(captured.out.splitlines()) == 2
+
+
+# pylint: disable=unused-argument
+def test_ssh_assets_list_keys_match_group(mock_basic_config, monkeypatch, capsys):
+    """
+    Test running 'ssh-assets list-keys' with key parameters that match configured keys both
+    by first filtering by group then by key name
+
+    Group matching is done by two group names, one of which is valid
+    """
+    script = SshAssetsScript()
+    group_arg = f'{GROUP_NO_GROUP},{GROUP_MATCH_TEST}'
+    testargs = ['ssh-assets', 'list-keys', '--groups', group_arg, KEY_MATCH_MANUAL, KEY_MATCH_MISSING]
+    with monkeypatch.context() as context:
+        validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
+
+    captured = capsys.readouterr()
+    assert captured.err == ''
+    # Matches group with 2 keys, but only one matches key names
+    assert len(captured.out.splitlines()) == 1

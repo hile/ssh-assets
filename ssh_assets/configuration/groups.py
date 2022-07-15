@@ -45,3 +45,16 @@ class GroupListConfigurationSection(ConfigurationList):
     """
     __dict_loader_class__ = GroupConfiguration
     __name__ = 'groups'
+
+    def get_group(self, name):
+        """
+        Return configured group by name
+
+        Returns
+        -------
+        GroupConfiguration object or None if named group does not exist
+        """
+        for group in self:
+            if group.name == name:
+                return group
+        return None

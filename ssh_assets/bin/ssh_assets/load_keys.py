@@ -30,6 +30,7 @@ class LoadKeysCommand(SshKeysCommand):
         """
         Register various parser arguments
         """
+        parser = super().register_parser_arguments(parser)
         parser.add_argument(
             '--all',
             action='store_true',
