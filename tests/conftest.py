@@ -3,6 +3,7 @@ Unit test configuration for ssh_assets module
 """
 
 import os
+import shutil
 import socket
 
 from pathlib import Path
@@ -91,6 +92,23 @@ def mock_basic_config(monkeypatch):
     """
     monkeypatch.setattr('ssh_assets.session.USER_CONFIGURATION_FILE', MOCK_BASIC_CONFIG)
     return MOCK_BASIC_CONFIG
+
+
+@pytest.fixture
+def mock_temporary_config(monkeypatch, tmpdir):
+    """
+    Mock basic configuration for SSH assets from temporary directory, used in configuration write tests
+
+    This example configuration contains user configuration file with valid details
+
+    Returns
+    -------
+    Returns loaded configuration file as pathlib.Path
+    """
+    filename = Path(tmpdir.strpath, 'assets.yml')
+    monkeypatch.setattr('ssh_assets.session.USER_CONFIGURATION_FILE', filename)
+    shutil.copyfile(MOCK_BASIC_CONFIG, filename)
+    return filename
 
 
 @pytest.fixture(params=MOCK_TEST_KEYS)

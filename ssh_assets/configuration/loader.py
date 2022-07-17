@@ -2,9 +2,13 @@
 Configuration file processing for SSH assets utility
 """
 
+from pathlib import Path
+
 import yaml
 
 from sys_toolkit.configuration.yaml import YamlConfiguration
+
+from ..exceptions import SSHAssetsError
 
 from .groups import GroupListConfigurationSection
 from .keys import SshKeyListConfigurationSection
@@ -40,6 +44,17 @@ class SshAssetsConfiguration(YamlConfiguration):
         Return configuration as YAML stream
         """
         return yaml.dump(self.as_dict(), Dumper=SSHAssetsConfigurationDumper)
+
+    def save(self, path=None):
+        """
+        Save configuration to specified file. If not path is specified original path is used.
+        """
+        path = Path(path).expanduser().resolve() if path is not None else self.__path__
+        data = self.as_yaml()
+        try:
+            path.write_text(data, encoding='utf-8')
+        except OSError as error:
+            raise SSHAssetsError(f'Error writing file {path}: {error}') from error
 
 
 class SSHAssetsConfigurationDumper(yaml.Dumper):

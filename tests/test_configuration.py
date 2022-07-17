@@ -3,10 +3,12 @@ Unit tests for ssh_assets.configuration python module
 """
 from pathlib import Path
 
+import pytest
 import yaml
 
 from sys_toolkit.tests.mock import MockCalledMethod
 
+from ssh_assets.exceptions import SSHAssetsError
 from ssh_assets.session import SshAssetSession
 from ssh_assets.authorized_keys import AuthorizedKeys
 from ssh_assets.authorized_keys.constants import DEFAULT_AUTHORIZED_KEYS_FILE
@@ -16,6 +18,8 @@ from ssh_assets.configuration.keys import SshKeyConfiguration, SshKeyListConfigu
 from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.agent import SshAgent
 from ssh_assets.keys.file import SSHKeyFile
+
+from .conftest import FILE_READONLY
 
 EXPECTED_KEY_COUNT = 3
 EXPECTED_AVAILABLE_KEY_COUNT = 2
@@ -178,3 +182,36 @@ def test_keys_configured_unload_from_agent(mock_basic_config, mock_agent_key_lis
     assert mock_unload.call_count == 0
     key.unload_from_agent()
     assert mock_unload.call_count == 1
+
+
+def test_configuration_save_default_file(mock_temporary_config):
+    """
+    Test saving configuration to default file using temporary file
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+    session.configuration.save()
+    assert mock_temporary_config.is_file()
+
+
+def test_configuration_save_error(mock_temporary_config):
+    """
+    Test errors saving configuration to default file using temporary file
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.chmod(FILE_READONLY)
+    with pytest.raises(SSHAssetsError):
+        session.configuration.save()
+
+
+def test_configuration_save_different_filename(mock_temporary_config):
+    """
+    Test saving configuration to a different file given as string
+    """
+    testfile = Path(f'{mock_temporary_config}.tmp.yml')
+    session = SshAssetSession()
+    assert not testfile.is_file()
+    session.configuration.save(str(testfile))
+    assert testfile.is_file()
