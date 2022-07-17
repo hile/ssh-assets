@@ -2,6 +2,8 @@
 Configuration parser for 'keys' configuration section in SSH assets configuration
 """
 
+from pathlib import Path
+
 from sys_toolkit.configuration.base import ConfigurationList, ConfigurationSection
 
 from ..duration import Duration
@@ -12,6 +14,7 @@ class SshKeyConfiguration(ConfigurationSection):
     """
     Configuration section for a single SSH key
     """
+    __literal_path__ = None
     name = None
     path = None
     expire = None
@@ -19,9 +22,6 @@ class SshKeyConfiguration(ConfigurationSection):
 
     __required_settings__ = (
         'name',
-        'path',
-    )
-    __path_settings__ = (
         'path',
     )
 
@@ -32,6 +32,16 @@ class SshKeyConfiguration(ConfigurationSection):
 
     def __repr__(self):
         return str(self.name) if self.name else ''
+
+    def __setattr__(self, attr, value):
+        """
+        Override __setattr__ to store original value of path to __literal_path__
+        """
+        if attr == 'path':
+            self.__literal_path__ = value
+            if value is not None:
+                value = Path(value).expanduser().resolve()
+        return super().__setattr__(attr, value)
 
     @property
     def __agent__(self):
@@ -106,7 +116,7 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         data = {
             'name': self.name,
-            'path': str(self.path),
+            'path': str(self.__literal_path__),
         }
         if self.expire is not None:
             data['expire'] = str(self.expire)
