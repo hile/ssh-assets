@@ -41,10 +41,10 @@ INVALID_DURATION_VALUES = (
     '-10s',
 )
 VALID_DURATION_VALUES = (
-    600,
-    '600',
     '30s',
+    '600',
     '2w1d20s',
+    600,
 )
 
 
