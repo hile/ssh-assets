@@ -6,6 +6,7 @@ from cli_toolkit.script import Script
 
 from .list_keys import ListKeysCommand
 from .load_keys import LoadKeysCommand
+from .unload_keys import UnLoadKeysCommand
 
 USAGE = """SSH key and configuration file assets utility
 
@@ -25,6 +26,7 @@ class SshAssetsScript(Script):
     subcommands = (
         ListKeysCommand,
         LoadKeysCommand,
+        UnLoadKeysCommand,
     )
 
 

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from sys_toolkit.collection import CachedMutableSequence
 from sys_toolkit.exceptions import CommandError
-from sys_toolkit.subprocess import run_command_lineoutput
+from sys_toolkit.subprocess import run_command_lineoutput, run_command
 
 from ..exceptions import SSHKeyError
 
@@ -41,13 +41,21 @@ class AgentKey(SSHKeyLoader):
         return
 
 
-class SshAgentKeys(CachedMutableSequence):
+class SshAgent(CachedMutableSequence):
     """
     Class to list, load and flush keys from ssh agent
     """
     def __init__(self, session, hash_algorithm=DEFAULT_KEY_HASH_ALGORITHM):
         self.session = session
         self.hash_algorithm = hash_algorithm
+
+    @property
+    def configured_keys(self):
+        """
+        Return SSH keys configured in the SSH assets configuration file
+        """
+        # pylint: disable=no-member
+        return self.session.configuration.keys
 
     @property
     def agent_socket_path(self):
@@ -94,3 +102,37 @@ class SshAgentKeys(CachedMutableSequence):
             self.append(AgentKey(line, self.hash_algorithm))
 
         self.__finish_update__()
+
+    @staticmethod
+    def unload_keys_from_agent(keys=None, unload_all_keys=False):
+        """
+        Unload any named or configured keys from SSH agent
+
+        If unload_all_keys is True, all keys are removed from the agent
+        """
+        if unload_all_keys:
+            try:
+                run_command('ssh-add', '-D')
+            except CommandError as error:
+                raise SSHKeyError(f'Error unloading SSH keys from agent: {error}') from error
+
+        if not keys:
+            return
+
+        for key in keys:
+            if key.loaded:
+                key.unload_from_agent()
+
+    def load_keys_to_agent(self, keys=None, load_all_keys=False):
+        """
+        Load any available configured keys
+
+        If load_all_keys is False, only keys mared as autoload are loaded
+        """
+        if not keys:
+            keys = self.configured_keys
+        for key in keys:
+            if not load_all_keys and not key.autoload:
+                continue
+            if not key.loaded and key.available:
+                key.load_to_agent()

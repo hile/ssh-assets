@@ -36,7 +36,7 @@ class SshKeyConfiguration(ConfigurationSection):
     @property
     def __agent__(self):
         """
-        Return handle to the ssh_assets.keys.agent.SshAgentKeys object via session
+        Return handle to the ssh_assets.keys.agent.SshAgent object via session
         """
         return self.__parent__.__parent__.__session__.agent
 
@@ -87,6 +87,12 @@ class SshKeyConfiguration(ConfigurationSection):
         Return groups where this key is referenced
         """
         return [group for group in self.__group_configuration__ if self.name in group.keys]
+
+    def unload_from_agent(self):
+        """
+        Unload configured key from SSH agent
+        """
+        self.private_key.unload_from_agent()
 
     def load_to_agent(self):
         """

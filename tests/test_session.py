@@ -36,7 +36,7 @@ def test_ssh_asset_session_load_configured_keys_all(mock_basic_config, mock_agen
     """
     mock_load_to_agent = MockCalledMethod()
     monkeypatch.setattr('ssh_assets.configuration.keys.SshKeyConfiguration.load_to_agent', mock_load_to_agent)
-    SshAssetSession().load_keys_to_agent(load_all_keys=True)
+    SshAssetSession().agent.load_keys_to_agent(load_all_keys=True)
     assert mock_load_to_agent.call_count == EXPECTED_TOTAL_KEYS_TO_LOAD_COUNT
 
 
@@ -50,5 +50,5 @@ def test_ssh_asset_session_load_configured_keys_one_key(mock_basic_config, mock_
     session = SshAssetSession()
     # pylint: disable=no-member
     keys = session.configuration.keys[:1]
-    session.load_keys_to_agent(keys=keys, load_all_keys=True)
+    session.agent.load_keys_to_agent(keys=keys, load_all_keys=True)
     assert mock_load_to_agent.call_count == 1

@@ -149,3 +149,14 @@ def test_keys_file_load_to_agent_error(mock_test_key_file, monkeypatch):
     with pytest.raises(SSHKeyError):
         SSHKeyFile(mock_test_key_file).load_to_agent()
     assert mock_error.call_count == 1
+
+
+def test_keys_file_unload_from_agent_error(mock_test_key_file, monkeypatch):
+    """
+    Test call to unload SSH key to agent when error is raised during loading
+    """
+    mock_error = MockException(CommandError)
+    monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_error)
+    with pytest.raises(SSHKeyError):
+        SSHKeyFile(mock_test_key_file).unload_from_agent()
+    assert mock_error.call_count == 1

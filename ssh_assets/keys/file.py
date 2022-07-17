@@ -70,6 +70,15 @@ class SSHKeyFile(SSHKeyLoader):
         except OSError as error:
             raise SSHKeyError(f'Error reading public key file {self.public_key_file_path}: {error}') from error
 
+    def unload_from_agent(self):
+        """
+        Unlad SSH key from agent
+        """
+        try:
+            run_command('ssh-add', '-d', str(self.path))
+        except CommandError as error:
+            raise SSHKeyError(f'Error unloading key from SSH agent: {error}') from error
+
     def load_to_agent(self):
         """
         Load SSH key to agent
