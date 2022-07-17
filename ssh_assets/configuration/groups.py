@@ -4,6 +4,8 @@ Configuration parser for 'groups' configuration section in SSH assets configurat
 
 from sys_toolkit.configuration.base import ConfigurationList, ConfigurationSection
 
+from ..duration import Duration
+
 
 class GroupConfiguration(ConfigurationSection):
     """
@@ -21,6 +23,10 @@ class GroupConfiguration(ConfigurationSection):
         'name',
     )
 
+    def __init__(self, data=dict, parent=None, debug_enabled=False, silent=False):
+        super().__init__(data, parent, debug_enabled, silent)
+        self.expire = Duration(self.expire) if self.expire is not None else None
+
     def __repr__(self):
         return self.name if self.name else ''
 
@@ -37,6 +43,19 @@ class GroupConfiguration(ConfigurationSection):
         Return private key configuration items matching this group
         """
         return [key for key in self.__key_configuration__ if key.name in self.keys]
+
+    def as_dict(self):
+        """
+        Return key configuration section as dictionary
+        """
+        data = {
+            'name': self.name,
+        }
+        if self.keys:
+            data['keys'] = [str(key) for key in self.keys]
+        if self.expire:
+            data['expire'] = str(self.expire)
+        return data
 
 
 class GroupListConfigurationSection(ConfigurationList):

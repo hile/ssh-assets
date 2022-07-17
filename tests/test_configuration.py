@@ -3,6 +3,8 @@ Unit tests for ssh_assets.configuration python module
 """
 from pathlib import Path
 
+import yaml
+
 from sys_toolkit.tests.mock import MockCalledMethod
 
 from ssh_assets.session import SshAssetSession
@@ -18,6 +20,16 @@ from ssh_assets.keys.file import SSHKeyFile
 EXPECTED_KEY_COUNT = 3
 EXPECTED_AVAILABLE_KEY_COUNT = 2
 EXPECTED_AUTOLOAD_KEY_COUNT = 1
+
+
+def validate_configuration_dictionary(data):
+    """
+    Validate sanity of a configuration dictionary result
+    """
+    for attr in ('groups', 'keys'):
+        assert attr in data
+        assert isinstance(data[attr], list)
+        assert data[attr] != []
 
 
 def test_load_empty_config(mock_empty_config):
@@ -44,8 +56,6 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
     configured_keys = session.configuration.keys
     assert len(configured_keys) == EXPECTED_KEY_COUNT
 
-    for key in configured_keys.available:
-        print(key.path)
     assert len(configured_keys.available) == EXPECTED_AVAILABLE_KEY_COUNT
 
     for item in configured_groups:
@@ -54,6 +64,7 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
         assert isinstance(item.name, str)
         assert isinstance(item.__key_configuration__, SshKeyListConfigurationSection)
         assert isinstance(item.private_keys, list)
+        assert isinstance(item.as_dict(), dict)
 
     for item in configured_keys:
         assert isinstance(item, SshKeyConfiguration)
@@ -63,6 +74,7 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
         assert isinstance(item.__agent__, SshAgentKeys)
         assert isinstance(item.__group_configuration__, GroupListConfigurationSection)
         assert isinstance(item.groups, list)
+        assert isinstance(item.as_dict(), dict)
 
         if item.available:
             assert isinstance(item.hash, str)
@@ -70,6 +82,27 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
         else:
             assert item.hash is None
             assert item.loaded is False
+
+
+def test_load_basic_config_as_dict(mock_basic_config, mock_agent_key_list):
+    """
+    Minimal validation for basic configuration mock file contents from as_dict()
+    """
+    session = SshAssetSession()
+    data = session.configuration.as_dict()
+    assert isinstance(data, dict)
+    validate_configuration_dictionary(data)
+
+
+def test_load_basic_config_as_yaml(mock_basic_config, mock_agent_key_list):
+    """
+    Minimal validation for basic configuration mock file contents from as_yaml()
+    """
+    session = SshAssetSession()
+    output = session.configuration.as_yaml()
+    assert isinstance(output, str)
+    data = yaml.safe_load(output)
+    validate_configuration_dictionary(data)
 
 
 def test_keys_file_load_available_autoload_keys_to_agent(

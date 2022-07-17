@@ -3,6 +3,8 @@ Configuration parser for 'keys' configuration section in SSH assets configuratio
 """
 
 from sys_toolkit.configuration.base import ConfigurationList, ConfigurationSection
+
+from ..duration import Duration
 from ..keys.file import SSHKeyFile
 
 
@@ -25,6 +27,7 @@ class SshKeyConfiguration(ConfigurationSection):
 
     def __init__(self, data=dict, parent=None, debug_enabled=False, silent=False):
         super().__init__(data, parent, debug_enabled, silent)
+        self.expire = Duration(self.expire) if self.expire is not None else None
         self.private_key = SSHKeyFile(self.path)
 
     def __repr__(self):
@@ -91,6 +94,20 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         self.private_key.load_to_agent()
 
+    def as_dict(self):
+        """
+        Return key configuration section as dictionary
+        """
+        data = {
+            'name': self.name,
+            'path': str(self.path),
+        }
+        if self.expire is not None:
+            data['expire'] = str(self.expire)
+        if self.autoload:
+            data['autoload'] = True
+        return data
+
 
 class SshKeyListConfigurationSection(ConfigurationList):
     """
@@ -112,3 +129,13 @@ class SshKeyListConfigurationSection(ConfigurationList):
         Return available and autoloaded configured SSH keys not yet loaded to agent
         """
         return [key for key in self if key.available and key.autoload and not key.loaded]
+
+    def get_key_by_name(self, name):
+        """
+        Get key by name
+        """
+
+    def configure_key(self, name, path, expire=None, autoload=False):
+        """
+        Configure named key to the SSH assets configuration and save configuration file
+        """

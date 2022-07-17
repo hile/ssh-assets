@@ -14,6 +14,7 @@ keys:
     autoload: true
   - name: manual
     path: tests/mock/keys/PKCS8/ssh_key_ecdsa
+    expire: 1h
   - name: missing
     path: tests/mock/keys/ssh_key_rsa
     autoload: true
