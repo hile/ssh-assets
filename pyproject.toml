@@ -1,13 +1,13 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.1.0"
+version = "1.2.0"
 description = "SSH asset and key management tools"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]
 license = "PSF"
 
 [tool.poetry.dependencies]
 python = "^3.9"
-cli-toolkit = "^2"
+cli-toolkit = "2.1.4"
 
 [tool.poetry.dev-dependencies]
 coverage = "^6.1"
