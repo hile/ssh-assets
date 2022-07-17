@@ -240,3 +240,86 @@ def test_configuration_save_different_filename(mock_temporary_config):
     assert not testfile.is_file()
     session.configuration.save(str(testfile))
     assert testfile.is_file()
+
+
+def test_configuration_add_new_key(mock_temporary_config, tmpdir):
+    """
+    Test adding new key to configuration
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key_configuration.configure_key('temporary', path=tmpdir.strpath)
+    assert mock_temporary_config.is_file()
+
+
+def test_configuration_update_key_path(mock_temporary_config, tmpdir):
+    """
+    Test updating a key in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case key path
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key = key_configuration[0]
+
+    key_configuration.configure_key(key.name, path=tmpdir.strpath)
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    key_configuration.configure_key(key.name, path=tmpdir.strpath)
+    assert not mock_temporary_config.is_file()
+
+
+def test_configuration_update_key_expire(mock_temporary_config, tmpdir):
+    """
+    Test updating a key in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case expiration
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key = key_configuration[0]
+
+    key_configuration.configure_key(key.name, expire='1d')
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    key_configuration.configure_key(key.name, expire='1d')
+    assert not mock_temporary_config.is_file()
+
+    key_configuration.configure_key(key.name, expire=None)
+    assert mock_temporary_config.is_file()
+
+
+def test_configuration_update_key_autoload(mock_temporary_config, tmpdir):
+    """
+    Test updating a key in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case updates autoload field
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key = key_configuration[0]
+
+    key_configuration.configure_key(key.name, autoload=False)
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    key_configuration.configure_key(key.name, autoload=False)
+    assert not mock_temporary_config.is_file()
+
+    key_configuration.configure_key(key.name, autoload=None)
+    assert mock_temporary_config.is_file()

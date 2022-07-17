@@ -124,6 +124,34 @@ class SshKeyConfiguration(ConfigurationSection):
             data['autoload'] = True
         return data
 
+    def update(self, **kwargs):
+        """
+        Update key attributes from kwargs
+
+        Kwargs can contain valid updated values for path, expire and autoload fields
+
+        Returns
+        -------
+        True if any of the fields were changed
+        """
+        modified = False
+        path = kwargs.get('path', None)
+        if path and self.__literal_path__ != path:
+            self.path = path
+            modified = True
+        if 'autoload' in kwargs and kwargs['autoload'] in (True, False, None):
+            if self.autoload != kwargs['autoload']:
+                self.autoload = kwargs['autoload']
+                modified = True
+        if 'expire' in kwargs:
+            expire = kwargs['expire']
+            if expire is not None:
+                expire = Duration(expire)
+            if self.expire != expire:
+                self.expire = expire
+                modified = True
+        return modified
+
 
 class SshKeyListConfigurationSection(ConfigurationList):
     """
@@ -166,7 +194,17 @@ class SshKeyListConfigurationSection(ConfigurationList):
         except KeyError:
             return None
 
-    def configure_key(self, name, path, expire=None, autoload=False):
+    def configure_key(self, name, **kwargs):
         """
         Configure named key to the SSH assets configuration and save configuration file
         """
+        key = self.get_key_by_name(name)
+        if key is None:
+            kwargs['name'] = name
+            key = SshKeyConfiguration(kwargs)
+            self.append(key)
+            modified = True
+        else:
+            modified = key.update(**kwargs)
+        if modified:
+            self.__parent__.save()
