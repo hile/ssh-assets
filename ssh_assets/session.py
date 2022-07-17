@@ -54,7 +54,7 @@ class SshAssetSession:
         except CommandError as error:
             raise SSHKeyError(f'Error unloading SSH keys from agent: {error}') from error
 
-    def load_available_keys(self, keys=None, load_all_keys=False):
+    def load_keys_to_agent(self, keys=None, load_all_keys=False):
         """
         Load any available configured keys
 

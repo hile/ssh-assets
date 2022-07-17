@@ -17,7 +17,7 @@ def test_ssh_assets_load_keys_no_args(mock_basic_config, monkeypatch):
     Test running command 'ssh-assets load-keys' with no additional arguments
     """
     mock_method = MockCalledMethod()
-    monkeypatch.setattr('ssh_assets.session.SshAssetSession.load_available_keys', mock_method)
+    monkeypatch.setattr('ssh_assets.session.SshAssetSession.load_keys_to_agent', mock_method)
 
     script = SshAssetsScript()
     testargs = ['ssh-assets', 'load-keys']
@@ -37,7 +37,7 @@ def test_ssh_assets_load_keys_all_keys(mock_basic_config, monkeypatch):
     Test running command 'ssh-assets load-keys' with all keys to load specified explicitly
     """
     mock_method = MockCalledMethod()
-    monkeypatch.setattr('ssh_assets.session.SshAssetSession.load_available_keys', mock_method)
+    monkeypatch.setattr('ssh_assets.session.SshAssetSession.load_keys_to_agent', mock_method)
 
     script = SshAssetsScript()
     testargs = ['ssh-assets', 'load-keys', '--all']
@@ -57,7 +57,7 @@ def test_ssh_assets_load_keys_in_group(mock_basic_config, monkeypatch):
     Test running command 'ssh-assets load-keys' with group name to filter out specific keys
     """
     mock_method = MockCalledMethod()
-    monkeypatch.setattr('ssh_assets.session.SshAssetSession.load_available_keys', mock_method)
+    monkeypatch.setattr('ssh_assets.session.SshAssetSession.load_keys_to_agent', mock_method)
 
     script = SshAssetsScript()
     testargs = ['ssh-assets', 'load-keys', '--groups', GROUP_MATCH_TEST]

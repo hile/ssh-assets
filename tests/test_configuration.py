@@ -119,7 +119,7 @@ def test_keys_file_load_available_autoload_keys_to_agent(
 
     # pylint: disable=no-member
     assert len(session.configuration.keys.pending) == EXPECTED_AUTOLOAD_KEY_COUNT
-    session.load_available_keys()
+    session.load_keys_to_agent()
     assert mock_load.call_count == EXPECTED_AUTOLOAD_KEY_COUNT
 
 
@@ -137,7 +137,7 @@ def test_keys_file_load_available_all_keys_to_agent(
 
     # pylint: disable=no-member
     assert len(session.configuration.keys.pending) == 0
-    session.load_available_keys()
+    session.load_keys_to_agent()
     assert mock_load.call_count == 0
 
     assert isinstance(session.user_authorized_keys, AuthorizedKeys)
