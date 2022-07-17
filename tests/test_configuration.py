@@ -21,6 +21,9 @@ from ssh_assets.keys.file import SSHKeyFile
 
 from .conftest import FILE_READONLY
 
+
+MOCK_UNKNOWN_KEY_NAME = 'nosuchkey'
+
 EXPECTED_KEY_COUNT = 3
 EXPECTED_AVAILABLE_KEY_COUNT = 2
 EXPECTED_AUTOLOAD_KEY_COUNT = 1
@@ -107,6 +110,28 @@ def test_load_basic_config_as_yaml(mock_basic_config, mock_agent_key_list):
     assert isinstance(output, str)
     data = yaml.safe_load(output)
     validate_configuration_dictionary(data)
+
+
+def test_load_basic_config_lookup_existing(mock_basic_config):
+    """
+    Look up keys by name from mock basic configuration
+    """
+    session = SshAssetSession()
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    for key in key_configuration:
+        item = key_configuration.get_key_by_name(key.name)
+        assert item == key
+
+
+def test_load_basic_config_lookup_invalid_name(mock_basic_config):
+    """
+    Look up keys by invalid name from mock basic configuration
+    """
+    session = SshAssetSession()
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    assert key_configuration.get_key_by_name(MOCK_UNKNOWN_KEY_NAME) is None
 
 
 def test_keys_file_load_available_autoload_keys_to_agent(

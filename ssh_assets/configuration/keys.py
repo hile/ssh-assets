@@ -132,6 +132,10 @@ class SshKeyListConfigurationSection(ConfigurationList):
     __dict_loader_class__ = SshKeyConfiguration
     __name__ = 'keys'
 
+    def __init__(self, setting=None, data=None, parent=None):
+        super().__init__(setting, data, parent)
+        self.__key_name_lookup__ = {}
+
     @property
     def available(self):
         """
@@ -146,10 +150,21 @@ class SshKeyListConfigurationSection(ConfigurationList):
         """
         return [key for key in self if key.available and key.autoload and not key.loaded]
 
+    def append(self, value):
+        """
+        Append an item to the key configuration
+        """
+        self.__key_name_lookup__[value.name] = value
+        super().append(value)
+
     def get_key_by_name(self, name):
         """
         Get key by name
         """
+        try:
+            return self.__key_name_lookup__[name]
+        except KeyError:
+            return None
 
     def configure_key(self, name, path, expire=None, autoload=False):
         """
