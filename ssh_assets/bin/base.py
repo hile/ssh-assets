@@ -131,4 +131,9 @@ class SshKeysCommand(SshAssetsCommand):
         keys = self.keys
         for method in filter_methdos:
             keys = method(keys, args)
+        if not keys:
+            if not args.groups and not args.keys:
+                self.exit(1, 'No keys are configured in the SSH assets configuration file')
+            else:
+                self.exit(1, 'No keys matching query arguments detected')
         return keys

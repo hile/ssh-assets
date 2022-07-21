@@ -69,4 +69,4 @@ def test_ssh_assets_load_keys_in_group(mock_basic_config, monkeypatch):
     assert args == ()
     kwargs = mock_method.kwargs[0]
     assert len(kwargs['keys']) == 2
-    assert kwargs['load_all_keys'] is False
+    assert kwargs['load_all_keys'] is True

@@ -22,8 +22,8 @@ def test_ssh_assets_unload_keys_invalid_key_name(mock_basic_config, monkeypatch)
     script = SshAssetsScript()
     testargs = ['ssh-assets', 'unload-keys', 'unexpected']
     with monkeypatch.context() as context:
-        validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
-    assert mock_method.call_count == 1
+        validate_script_run_exception_with_args(script, context, testargs, exit_code=1)
+    assert mock_method.call_count == 0
 
 
 # pylint: disable=unused-argument

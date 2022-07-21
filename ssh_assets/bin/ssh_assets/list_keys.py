@@ -26,12 +26,5 @@ class ListKeysCommand(SshKeysCommand):
         """
         List the keys in asset configuration file
         """
-        keys = self.filter_keys(args)
-        if not keys:
-            if not args.groups and not args.keys:
-                self.exit(1, 'No keys are configured in the SSH assets configuration file')
-            else:
-                self.exit(1, 'No keys matching query arguments detected')
-
-        for item in keys:
+        for item in self.filter_keys(args):
             self.message(f'{item.name} {item.private_key}')
