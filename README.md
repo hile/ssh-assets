@@ -1,4 +1,5 @@
-![CI pipeline](https://github.com/hile/ssh-assets/actions/workflows/main.yml/badge.svg)
+![Unit Tests](https://github.com/hile/ssh-assets/actions/workflows/unittest.yml/badge.svg)
+![Style Checks](https://github.com/hile/ssh-assets/actions/workflows/lint.yml/badge.svg)
 
 # SSH assets python library
 
