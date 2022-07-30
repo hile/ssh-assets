@@ -136,3 +136,5 @@ class SshAgent(CachedMutableSequence):
                 continue
             if not key.loaded and key.available:
                 key.load_to_agent()
+                if key.minimum_expire:
+                    self.session.configuration.message(f'key {key} loaded with expiration value {key.minimum_expire}')

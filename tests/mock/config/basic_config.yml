@@ -7,8 +7,14 @@ groups:
     keys:
     - test
     - manual
+  - name: noexpire-group
+    keys:
+    - manual
   - name: unconfigured
 keys:
+  - name: noexpire
+    path: tests/mock/keys/PEM/ssh_key_dsa
+    autoload: true
   - name: test
     path: tests/mock/keys/RFC4716/ssh_key_dsa
     autoload: true

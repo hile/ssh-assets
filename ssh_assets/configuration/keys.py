@@ -92,6 +92,19 @@ class SshKeyConfiguration(ConfigurationSection):
         return self.private_key.hash in self.__agent__
 
     @property
+    def minimum_expire(self):
+        """
+        Return shortest configured expiration value from key and it's groups
+        """
+        values = [self.expire] if self.expire else []
+        for group in self.groups:
+            if group.expire:
+                values.append(group.expire)
+        if values:
+            return sorted(values)[-1]
+        return None
+
+    @property
     def groups(self):
         """
         Return groups where this key is referenced
@@ -108,7 +121,7 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         Load configured key to SSH agent
         """
-        self.private_key.load_to_agent()
+        self.private_key.load_to_agent(expire=self.minimum_expire)
 
     def as_dict(self):
         """

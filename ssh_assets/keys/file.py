@@ -79,12 +79,16 @@ class SSHKeyFile(SSHKeyLoader):
         except CommandError as error:
             raise SSHKeyError(f'Error unloading key from SSH agent: {error}') from error
 
-    def load_to_agent(self):
+    def load_to_agent(self, expire=None):
         """
         Load SSH key to agent
         """
+        if expire:
+            command = ('ssh-add', '-t', str(expire), str(self.path))
+        else:
+            command = ('ssh-add', str(self.path))
         try:
-            run_command('ssh-add', str(self.path))
+            run_command(*command)
         except CommandError as error:
             raise SSHKeyError(f'Error loading key to SSH agent: {error}') from error
 

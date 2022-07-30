@@ -8,8 +8,7 @@ from ssh_assets.session import SshAssetSession
 from ssh_assets.configuration.keys import SshKeyListConfigurationSection
 from ssh_assets.configuration.groups import GroupListConfigurationSection
 
-# Mock configuration has 3 keys, one is not available (invalid file path)
-EXPECTED_TOTAL_KEYS_TO_LOAD_COUNT = 2
+from .conftest import MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT
 
 
 # pylint: disable=unused-argument
@@ -37,7 +36,7 @@ def test_ssh_asset_session_load_configured_keys_all(mock_basic_config, mock_agen
     mock_load_to_agent = MockCalledMethod()
     monkeypatch.setattr('ssh_assets.configuration.keys.SshKeyConfiguration.load_to_agent', mock_load_to_agent)
     SshAssetSession().agent.load_keys_to_agent(load_all_keys=True)
-    assert mock_load_to_agent.call_count == EXPECTED_TOTAL_KEYS_TO_LOAD_COUNT
+    assert mock_load_to_agent.call_count == MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT
 
 
 # pylint: disable=unused-argument

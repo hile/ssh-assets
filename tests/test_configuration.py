@@ -19,14 +19,20 @@ from ssh_assets.keys.constants import KeyHashAlgorithm
 from ssh_assets.keys.agent import SshAgent
 from ssh_assets.keys.file import SSHKeyFile
 
-from .conftest import FILE_READONLY
-
+from .conftest import (
+    FILE_READONLY,
+    MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT,
+    MOCK_BASIC_CONFIG_AUTOLOAD_KEYS_COUNT,
+    MOCK_BASIC_CONFIG_KEYS_COUNT,
+)
 
 MOCK_UNKNOWN_KEY_NAME = 'nosuchkey'
 
-EXPECTED_KEY_COUNT = 3
-EXPECTED_AVAILABLE_KEY_COUNT = 2
-EXPECTED_AUTOLOAD_KEY_COUNT = 1
+EXPECTED_MINUMUM_EXPIRATION_VALUES = {
+    'test': '1d',
+    'manual': '1h',
+    'missing': None,
+}
 
 
 def validate_configuration_dictionary(data):
@@ -61,9 +67,9 @@ def test_load_basic_config(mock_basic_config, mock_agent_key_list):
     configured_groups = session.configuration.groups
     # pylint: disable=no-member
     configured_keys = session.configuration.keys
-    assert len(configured_keys) == EXPECTED_KEY_COUNT
+    assert len(configured_keys) == MOCK_BASIC_CONFIG_KEYS_COUNT
 
-    assert len(configured_keys.available) == EXPECTED_AVAILABLE_KEY_COUNT
+    assert len(configured_keys.available) == MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT
 
     for item in configured_groups:
         assert isinstance(item, GroupConfiguration)
@@ -134,6 +140,18 @@ def test_load_basic_config_lookup_invalid_name(mock_basic_config):
     assert key_configuration.get_key_by_name(MOCK_UNKNOWN_KEY_NAME) is None
 
 
+def test_configuration_key_minimum_expire(mock_basic_config):
+    """
+    Check loading of named keys with expected expiration values in mocked basic config
+    """
+    session = SshAssetSession()
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    for name, expire_value in EXPECTED_MINUMUM_EXPIRATION_VALUES.items():
+        key = key_configuration.get_key_by_name(name)
+        assert key.minimum_expire == expire_value
+
+
 def test_keys_file_load_available_autoload_keys_to_agent(
         mock_basic_config,
         mock_agent_no_keys,
@@ -147,9 +165,9 @@ def test_keys_file_load_available_autoload_keys_to_agent(
     session = SshAssetSession()
 
     # pylint: disable=no-member
-    assert len(session.configuration.keys.pending) == EXPECTED_AUTOLOAD_KEY_COUNT
+    assert len(session.configuration.keys.pending) == MOCK_BASIC_CONFIG_AUTOLOAD_KEYS_COUNT
     session.agent.load_keys_to_agent()
-    assert mock_load.call_count == EXPECTED_AUTOLOAD_KEY_COUNT
+    assert mock_load.call_count == MOCK_BASIC_CONFIG_AUTOLOAD_KEYS_COUNT
 
 
 def test_keys_file_load_available_all_keys_to_agent(

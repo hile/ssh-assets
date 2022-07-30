@@ -21,8 +21,9 @@ from ssh_assets.keys.constants import SSH_AUTH_SOCK_ENV_VAR, SSH_AGENT_NO_KEYS_M
 MOCK_DATA = Path(__file__).parent.joinpath('mock')
 MOCK_BASIC_CONFIG = MOCK_DATA.joinpath('config/basic_config.yml')
 MOCK_EMPTY_CONFIG = MOCK_DATA.joinpath('config/empty_config.yml')
-MOCK_BASIC_CONFIG_KEYS_COUNT = 3
-MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT = 2
+MOCK_BASIC_CONFIG_KEYS_COUNT = 4
+MOCK_BASIC_CONFIG_AUTOLOAD_KEYS_COUNT = 2
+MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT = 3
 
 MOCK_AGENT_OUTPUT = MOCK_DATA.joinpath('keys/agent.txt')
 MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
