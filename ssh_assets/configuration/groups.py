@@ -71,7 +71,7 @@ class GroupConfiguration(ConfigurationSection):
         if 'keys' in kwargs:
             keys = kwargs['keys']
             if not isinstance(keys, list):
-                raise ValueError(f'Keys must be list of key names')
+                raise ValueError('Keys must be list of key names')
             if sorted(keys) != sorted(self.keys):
                 for name in keys:
                     if not self.__key_configuration__.get_key_by_name(name):
