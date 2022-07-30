@@ -4,7 +4,7 @@ CLI 'ssh-assets' subcommand 'list-keys'
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from ..base import SshKeysCommand
+from .base import SshKeysCommand
 
 USAGE = """List SSH keys
 """
@@ -20,7 +20,7 @@ class ListKeysCommand(SshKeysCommand):
     """
     Subcommand to list SSH keys in assets configuration and loaded to the agent
     """
-    name = 'list-keys'
+    name = 'list'
     usage = USAGE
     description = DESCRIPTION
 

@@ -4,7 +4,7 @@ CLI 'ssh-assets' subcommand 'load-keys'
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from ..base import SshKeysCommand
+from .base import SshKeysCommand
 
 USAGE = f"""Load configured SSH keys
 
@@ -23,7 +23,7 @@ class LoadKeysCommand(SshKeysCommand):
     """
     Subcommand to load SSH keys to agent
     """
-    name = 'load-keys'
+    name = 'load'
     usage = USAGE
 
     def register_parser_arguments(self, parser):

@@ -260,6 +260,109 @@ def test_configuration_save_different_filename(mock_temporary_config):
     assert testfile.is_file()
 
 
+def test_configuration_add_new_group(mock_temporary_config, tmpdir):
+    """
+    Test adding new group to configuration
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key = key_configuration[0]
+
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    group_configuration.configure_group('temporary', keys=[key.name], expire='1h')
+    assert mock_temporary_config.is_file()
+
+
+def test_configuration_update_group_expire(mock_temporary_config, tmpdir):
+    """
+    Test updating a group in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case updates group expire field
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    group = group_configuration[0]
+    group_configuration.configure_group(group.name, expire='1h')
+    assert mock_temporary_config.is_file()
+
+    mock_temporary_config.unlink()
+    group_configuration.configure_group(group.name, expire='1h')
+    assert not mock_temporary_config.is_file()
+
+    group_configuration.configure_group(group.name, expire=None)
+    assert mock_temporary_config.is_file()
+
+
+def test_configuration_update_group_keys_list_invalid_value(mock_temporary_config):
+    """
+    Test updating a group in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case updates group keys field with invalid value (must be a list)
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key = key_configuration[0]
+
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    group = group_configuration[0]
+    with pytest.raises(ValueError):
+        group_configuration.configure_group(group.name, keys=key)
+    assert not mock_temporary_config.is_file()
+
+
+def test_configuration_update_group_keys_list_unknown_key(mock_temporary_config):
+    """
+    Test updating a group in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case updates group keys field with unknown key
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    group = group_configuration[0]
+    with pytest.raises(ValueError):
+        group_configuration.configure_group(group.name, keys=['nosuchkey'])
+    assert not mock_temporary_config.is_file()
+
+
+def test_configuration_update_group_keys_list_valid(mock_temporary_config):
+    """
+    Test updating a group in SSH assets configuration with the temporary configuration file
+    that can be deleted. This test case updates group keys field with valid keys
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    key = key_configuration[0]
+
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    group = group_configuration[0]
+    group_configuration.configure_group(group.name, keys=[key.name])
+    assert mock_temporary_config.is_file()
+
+    mock_temporary_config.unlink()
+    group_configuration.configure_group(group.name, keys=[key.name])
+    assert not mock_temporary_config.is_file()
+
+
 def test_configuration_add_new_key(mock_temporary_config, tmpdir):
     """
     Test adding new key to configuration
@@ -277,7 +380,7 @@ def test_configuration_add_new_key(mock_temporary_config, tmpdir):
 def test_configuration_update_key_path(mock_temporary_config, tmpdir):
     """
     Test updating a key in SSH assets configuration with the temporary configuration file
-    that can be deleted. This test case key path
+    that can be deleted. This test case updates key path
     """
     session = SshAssetSession()
     assert mock_temporary_config.is_file()
@@ -298,7 +401,7 @@ def test_configuration_update_key_path(mock_temporary_config, tmpdir):
 def test_configuration_update_key_expire(mock_temporary_config, tmpdir):
     """
     Test updating a key in SSH assets configuration with the temporary configuration file
-    that can be deleted. This test case expiration
+    that can be deleted. This test case updates 'expire' value
     """
     session = SshAssetSession()
     assert mock_temporary_config.is_file()

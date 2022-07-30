@@ -57,6 +57,36 @@ class GroupConfiguration(ConfigurationSection):
             data['expire'] = str(self.expire)
         return data
 
+    def update(self, **kwargs):
+        """
+        Update group attributes from kwargs
+
+        Kwargs can contain valid updated values for path, expire and autoload fields
+
+        Returns
+        -------
+        True if any of the fields were changed
+        """
+        modified = False
+        if 'keys' in kwargs:
+            keys = kwargs['keys']
+            if not isinstance(keys, list):
+                raise ValueError(f'Keys must be list of key names')
+            if sorted(keys) != sorted(self.keys):
+                for name in keys:
+                    if not self.__key_configuration__.get_key_by_name(name):
+                        raise ValueError(f'Invalid key name: {name}')
+                self.keys = keys
+                modified = True
+        if 'expire' in kwargs:
+            expire = kwargs['expire']
+            if expire is not None:
+                expire = Duration(expire)
+            if self.expire != expire:
+                self.expire = expire
+                modified = True
+        return modified
+
 
 class GroupListConfigurationSection(ConfigurationList):
     """
@@ -65,7 +95,7 @@ class GroupListConfigurationSection(ConfigurationList):
     __dict_loader_class__ = GroupConfiguration
     __name__ = 'groups'
 
-    def get_group(self, name):
+    def get_group_by_name(self, name):
         """
         Return configured group by name
 
@@ -77,3 +107,18 @@ class GroupListConfigurationSection(ConfigurationList):
             if group.name == name:
                 return group
         return None
+
+    def configure_group(self, name, **kwargs):
+        """
+        Configure named group to the SSH assets configuration and save configuration file
+        """
+        group = self.get_group_by_name(name)
+        if group is None:
+            kwargs['name'] = name
+            group = GroupConfiguration(parent=self, data=kwargs)
+            self.append(group)
+            modified = True
+        else:
+            modified = group.update(**kwargs)
+        if modified:
+            self.__parent__.save()

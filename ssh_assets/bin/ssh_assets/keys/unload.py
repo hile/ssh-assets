@@ -4,7 +4,7 @@ CLI 'ssh-assets' subcommand 'unload-keys'
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from ..base import SshKeysCommand
+from .base import SshKeysCommand
 
 USAGE = f"""Unload configured SSH keys from agent
 
@@ -21,7 +21,7 @@ class UnLoadKeysCommand(SshKeysCommand):
     """
     Subcommand to unload SSH keys to agent
     """
-    name = 'unload-keys'
+    name = 'unload'
     usage = USAGE
 
     def register_parser_arguments(self, parser):

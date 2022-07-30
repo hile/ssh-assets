@@ -12,15 +12,15 @@ GROUP_MATCH_TEST = 'demo'
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_load_keys_no_args(mock_basic_config, monkeypatch):
+def test_ssh_assets_cli_keys_load_no_args(mock_basic_config, monkeypatch):
     """
-    Test running command 'ssh-assets load-keys' with no additional arguments
+    Test running command 'ssh-assets keys load' with no additional arguments
     """
     mock_method = MockCalledMethod()
     monkeypatch.setattr('ssh_assets.keys.agent.SshAgent.load_keys_to_agent', mock_method)
 
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'load-keys']
+    testargs = ['ssh-assets', 'keys', 'load']
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 
@@ -32,15 +32,15 @@ def test_ssh_assets_load_keys_no_args(mock_basic_config, monkeypatch):
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_load_keys_all_keys(mock_basic_config, monkeypatch):
+def test_ssh_assets_cli_keys_load_all_keys(mock_basic_config, monkeypatch):
     """
-    Test running command 'ssh-assets load-keys' with all keys to load specified explicitly
+    Test running command 'ssh-assets keys load' with all keys to load specified explicitly
     """
     mock_method = MockCalledMethod()
     monkeypatch.setattr('ssh_assets.keys.agent.SshAgent.load_keys_to_agent', mock_method)
 
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'load-keys', '--all']
+    testargs = ['ssh-assets', 'keys', 'load', '--all']
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 
@@ -52,15 +52,15 @@ def test_ssh_assets_load_keys_all_keys(mock_basic_config, monkeypatch):
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_load_keys_in_group(mock_basic_config, monkeypatch):
+def test_ssh_assets_cli_keys_load_in_group(mock_basic_config, monkeypatch):
     """
-    Test running command 'ssh-assets load-keys' with group name to filter out specific keys
+    Test running command 'ssh-assets keys load' with group name to filter out specific keys
     """
     mock_method = MockCalledMethod()
     monkeypatch.setattr('ssh_assets.keys.agent.SshAgent.load_keys_to_agent', mock_method)
 
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'load-keys', '--groups', GROUP_MATCH_TEST]
+    testargs = ['ssh-assets', 'keys', 'load', '--groups', GROUP_MATCH_TEST]
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 

@@ -214,7 +214,7 @@ class SshKeyListConfigurationSection(ConfigurationList):
         key = self.get_key_by_name(name)
         if key is None:
             kwargs['name'] = name
-            key = SshKeyConfiguration(kwargs)
+            key = SshKeyConfiguration(parent=self, data=kwargs)
             self.append(key)
             modified = True
         else:
