@@ -63,6 +63,13 @@ class SshKeysCommand(SshAssetsCommand):
         return args
 
     @property
+    def agent(self):
+        """
+        Return SSH agent keys iterator
+        """
+        return self.session.agent
+
+    @property
     def groups(self):
         """
         Return groups configured in the SSH assets configuration file

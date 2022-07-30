@@ -6,7 +6,11 @@ from cli_toolkit.tests.script import validate_script_run_exception_with_args
 
 from ssh_assets.bin.ssh_assets.main import SshAssetsScript
 
-from ...conftest import MOCK_BASIC_CONFIG_KEYS_COUNT
+from ...conftest import (
+    MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT,
+    MOCK_BASIC_CONFIG_KEYS_COUNT,
+    MOCK_AGENT_KEY_COUNT,
+)
 
 KEY_NO_MATCH = 'nomatch'
 
@@ -18,6 +22,36 @@ KEY_MATCH_MISSING = 'miss*'
 
 
 # pylint: disable=unused-argument
+def test_ssh_assets_list_keys_agent_no_keys(mock_empty_config, mock_agent_no_keys, monkeypatch, capsys):
+    """
+    Test running 'ssh-assets list-keys' without any arguments, listing no keys from agent
+    """
+    script = SshAssetsScript()
+    testargs = ['ssh-assets', 'list-keys']
+    with monkeypatch.context() as context:
+        validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
+
+    captured = capsys.readouterr()
+    assert captured.err == ''
+    assert captured.out == ''
+
+
+# pylint: disable=unused-argument
+def test_ssh_assets_list_keys_agent_loaded_keys(mock_empty_config, mock_agent_key_list, monkeypatch, capsys):
+    """
+    Test running 'ssh-assets list-keys' without any arguments, listing no keys from agent
+    """
+    script = SshAssetsScript()
+    testargs = ['ssh-assets', 'list-keys']
+    with monkeypatch.context() as context:
+        validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
+
+    captured = capsys.readouterr()
+    assert captured.err == ''
+    assert len(captured.out.splitlines()) == MOCK_AGENT_KEY_COUNT
+
+
+# pylint: disable=unused-argument
 def test_ssh_assets_list_keys_no_keys(mock_empty_config, monkeypatch, capsys):
     """
     Test running 'ssh-assets list-keys' without any arguments
@@ -25,7 +59,7 @@ def test_ssh_assets_list_keys_no_keys(mock_empty_config, monkeypatch, capsys):
     This will return with code 1 because there are no keys in mocked empty config
     """
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'list-keys']
+    testargs = ['ssh-assets', 'list-keys', '--configured']
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=1)
 
@@ -35,12 +69,12 @@ def test_ssh_assets_list_keys_no_keys(mock_empty_config, monkeypatch, capsys):
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_list_keys_mock_keys(mock_basic_config, monkeypatch, capsys):
+def test_ssh_assets_list_keys_configured(mock_basic_config, monkeypatch, capsys):
     """
-    Test running 'ssh-assets list-keys' without any arguments using mocked basic configuration
+    Test running 'ssh-assets list-keys --configured' using mocked basic configuration
     """
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'list-keys']
+    testargs = ['ssh-assets', 'list-keys', '--configured']
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 
@@ -50,12 +84,27 @@ def test_ssh_assets_list_keys_mock_keys(mock_basic_config, monkeypatch, capsys):
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_list_keys_no_match(mock_basic_config, monkeypatch, capsys):
+def test_ssh_assets_list_keys_available(mock_basic_config, monkeypatch, capsys):
     """
-    Test running 'ssh-assets list-keys' with key parameters that do not match any keys
+    Test running 'ssh-assets list-keys --available' with using mocked basic configuration
     """
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'list-keys', KEY_NO_MATCH]
+    testargs = ['ssh-assets', 'list-keys', '--available']
+    with monkeypatch.context() as context:
+        validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
+
+    captured = capsys.readouterr()
+    assert captured.err == ''
+    assert len(captured.out.splitlines()) == MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT
+
+
+# pylint: disable=unused-argument
+def test_ssh_assets_list_keys_no_match(mock_basic_config, monkeypatch, capsys):
+    """
+    Test running 'ssh-assets list-keys --configured' with key parameters that do not match any keys
+    """
+    script = SshAssetsScript()
+    testargs = ['ssh-assets', 'list-keys', '--configured', KEY_NO_MATCH]
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=1)
 
@@ -67,10 +116,10 @@ def test_ssh_assets_list_keys_no_match(mock_basic_config, monkeypatch, capsys):
 # pylint: disable=unused-argument
 def test_ssh_assets_list_keys_existing(mock_basic_config, monkeypatch, capsys):
     """
-    Test running 'ssh-assets list-keys' with key parameters that match configured keys
+    Test running 'ssh-assets list-keys --configured' with key parameters that match configured keys
     """
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'list-keys', KEY_MATCH_TEST, KEY_MATCH_MISSING]
+    testargs = ['ssh-assets', 'list-keys', '--configured', KEY_MATCH_TEST, KEY_MATCH_MISSING]
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 
@@ -82,14 +131,14 @@ def test_ssh_assets_list_keys_existing(mock_basic_config, monkeypatch, capsys):
 # pylint: disable=unused-argument
 def test_ssh_assets_list_keys_match_group(mock_basic_config, monkeypatch, capsys):
     """
-    Test running 'ssh-assets list-keys' with key parameters that match configured keys both
+    Test running 'ssh-assets list-keys --configured' with key parameters that match configured keys both
     by first filtering by group then by key name
 
     Group matching is done by two group names, one of which is valid
     """
     script = SshAssetsScript()
     group_arg = f'{GROUP_NO_GROUP},{GROUP_MATCH_TEST}'
-    testargs = ['ssh-assets', 'list-keys', '--groups', group_arg, KEY_MATCH_MANUAL, KEY_MATCH_MISSING]
+    testargs = ['ssh-assets', 'list-keys', '--configured', '--groups', group_arg, KEY_MATCH_MANUAL, KEY_MATCH_MISSING]
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 

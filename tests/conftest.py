@@ -22,9 +22,11 @@ MOCK_DATA = Path(__file__).parent.joinpath('mock')
 MOCK_BASIC_CONFIG = MOCK_DATA.joinpath('config/basic_config.yml')
 MOCK_EMPTY_CONFIG = MOCK_DATA.joinpath('config/empty_config.yml')
 MOCK_BASIC_CONFIG_KEYS_COUNT = 3
+MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT = 2
 
 MOCK_AGENT_OUTPUT = MOCK_DATA.joinpath('keys/agent.txt')
 MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
+MOCK_AGENT_KEY_COUNT = 12
 
 FILE_READONLY = int('0400', 8)
 FILE_NO_PERMISSION = int('0000', 8)
