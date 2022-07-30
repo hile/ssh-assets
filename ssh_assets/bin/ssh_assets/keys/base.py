@@ -20,11 +20,6 @@ class SshKeysCommand(SshAssetsCommand):
         """
         parser = super().register_parser_arguments(parser)
         parser.add_argument(
-            '-g', '--groups',
-            action='append',
-            help='Asset configuration groups to match'
-        )
-        parser.add_argument(
             'keys',
             nargs='*',
             help='SSH keys to process (name or path)'
@@ -36,13 +31,6 @@ class SshKeysCommand(SshAssetsCommand):
         Parse specified arguments
         """
         args = super().parse_args(args, namespace)
-        if args.groups:
-            args.groups = [var for arg in args.groups for var in arg.split(',')]
-            args.group_matches = []
-            for name in args.groups:
-                group = self.groups.get_group_by_name(name)
-                if group:
-                    args.group_matches.append(group)
         return args
 
     @property
@@ -51,20 +39,6 @@ class SshKeysCommand(SshAssetsCommand):
         Return SSH agent keys iterator
         """
         return self.session.agent
-
-    @property
-    def groups(self):
-        """
-        Return groups configured in the SSH assets configuration file
-        """
-        return self.session.configuration.groups  # pylint: disable=no-member
-
-    @property
-    def keys(self):
-        """
-        Return keys configured in the SSH assets configuration file
-        """
-        return self.session.configuration.keys  # pylint: disable=no-member
 
     @staticmethod
     def filter_key_groups(keys, args):

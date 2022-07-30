@@ -1,5 +1,5 @@
 """
-CLI 'ssh-assets' subcommand 'list-keys'
+CLI 'ssh-assets keys list'
 """
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE

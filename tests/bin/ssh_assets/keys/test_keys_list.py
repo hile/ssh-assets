@@ -84,7 +84,7 @@ def test_ssh_assets_cli_keys_list_configured(mock_basic_config, monkeypatch, cap
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_cli_keys_list_available(mock_basic_config, monkeypatch, capsys):
+def test_ssh_assets_cli_keys_available(mock_basic_config, monkeypatch, capsys):
     """
     Test running 'ssh-assets keys list --available' with using mocked basic configuration
     """
