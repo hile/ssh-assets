@@ -1,6 +1,7 @@
 """
 CLI 'ssh-assets keys list'
 """
+from argparse import ArgumentParser, Namespace
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
@@ -24,7 +25,7 @@ class ListKeysCommand(SshKeysCommand):
     usage = USAGE
     description = DESCRIPTION
 
-    def register_parser_arguments(self, parser):
+    def register_parser_arguments(self, parser: ArgumentParser) -> ArgumentParser:
         """
         Add arguments for listing keys in agent
         """
@@ -41,7 +42,7 @@ class ListKeysCommand(SshKeysCommand):
         )
         return parser
 
-    def list_configured_keys(self, args):
+    def list_configured_keys(self, args: Namespace):
         """
         List SSH keys configred in the SSH assets configuration file
         """
@@ -51,14 +52,14 @@ class ListKeysCommand(SshKeysCommand):
             self.message(f'{key.name} {key.private_key}')
 
     # pylint: disable=unused-argument
-    def list_ssh_agent_keys(self, args):
+    def list_ssh_agent_keys(self, args: Namespace):
         """
         List SSH keys configered to the agent
         """
         for key in self.agent:
             self.message(key)
 
-    def run(self, args):
+    def run(self, args: Namespace) -> None:
         """
         List the keys in asset configuration file or in the SSH agent
         """

@@ -1,8 +1,8 @@
 """
 Classes to load SSH keys from text files
 """
-
 from pathlib import Path
+from typing import Optional
 
 from sys_toolkit.exceptions import CommandError
 from sys_toolkit.subprocess import run_command, run_command_lineoutput
@@ -18,14 +18,14 @@ class SSHKeyFile(SSHKeyLoader):
 
     Base class for SSH private and public keys based on text files
     """
-    def __init__(self, path, hash_algorithm=DEFAULT_KEY_HASH_ALGORITHM):
+    def __init__(self, path: str, hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:
         super().__init__(hash_algorithm)
         self.path = Path(path).expanduser().resolve()
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self.path)
 
-    def __load_key_attributes__(self):
+    def __load_key_attributes__(self) -> None:
         """
         Load key attributes with ssh-keygen -l command
         """
@@ -45,21 +45,21 @@ class SSHKeyFile(SSHKeyLoader):
         return self.__parse_key_info_line__(stdout[0])
 
     @property
-    def public_key_file_path(self):
+    def public_key_file_path(self) -> Path:
         """
         Return pathlib.Path of self.path with .pub extension added
         """
         return Path(f'{self.path}.pub') if self.path.suffix != '.pub' else None
 
     @property
-    def has_public_key_file(self):
+    def has_public_key_file(self) -> bool:
         """
         Return boolen to indicate if public key file for this SSH key exists
         """
         return self.public_key_file_path.is_file() if self.public_key_file_path is not None else False
 
     @property
-    def public_key(self):
+    def public_key(self) -> PublicKey:
         """
         Return public key object from previously generated public key file
         """
@@ -70,7 +70,7 @@ class SSHKeyFile(SSHKeyLoader):
         except OSError as error:
             raise SSHKeyError(f'Error reading public key file {self.public_key_file_path}: {error}') from error
 
-    def unload_from_agent(self):
+    def unload_from_agent(self) -> None:
         """
         Unlad SSH key from agent
         """
@@ -79,7 +79,7 @@ class SSHKeyFile(SSHKeyLoader):
         except CommandError as error:
             raise SSHKeyError(f'Error unloading key from SSH agent: {error}') from error
 
-    def load_to_agent(self, expire=None):
+    def load_to_agent(self, expire: Optional[bool] = None) -> None:
         """
         Load SSH key to agent
         """
@@ -92,7 +92,7 @@ class SSHKeyFile(SSHKeyLoader):
         except CommandError as error:
             raise SSHKeyError(f'Error loading key to SSH agent: {error}') from error
 
-    def generate_public_key_file(self, filename=None, force=False):
+    def generate_public_key_file(self, filename: Optional[str] = None, force: bool = False) -> Path:
         """
         Get matching .pub public key file for this key
 

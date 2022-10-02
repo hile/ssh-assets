@@ -1,6 +1,7 @@
 """
 CLI 'ssh-assets' subcommand 'unload-keys'
 """
+from argparse import ArgumentParser, Namespace
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
@@ -24,7 +25,7 @@ class UnLoadKeysCommand(SshKeysCommand):
     name = 'unload'
     usage = USAGE
 
-    def register_parser_arguments(self, parser):
+    def register_parser_arguments(self, parser: ArgumentParser) -> ArgumentParser:
         """
         Register various parser arguments
         """
@@ -37,11 +38,14 @@ class UnLoadKeysCommand(SshKeysCommand):
         return parser
 
     # pylint: disable=unused-argument
-    def run(self, args, namespace=None):
+    def run(self, args: Namespace) -> None:
         """
         UnLoad SSH keys from the SSH agent
         """
         if not args.groups and not args.keys:
             self.session.agent.unload_keys_from_agent(unload_all_keys=True)
         else:
-            self.session.agent.unload_keys_from_agent(keys=self.filter_keys(args), unload_all_keys=False)
+            self.session.agent.unload_keys_from_agent(
+                keys=self.filter_keys(args),
+                unload_all_keys=False
+            )

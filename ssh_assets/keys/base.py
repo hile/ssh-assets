@@ -42,14 +42,14 @@ class SSHKeyLoader(RichComparisonObject):
     """
     __compare_attributes__ = KEY_COMPARE_ATTRIBUTES
 
-    def __init__(self, hash_algorithm=DEFAULT_KEY_HASH_ALGORITHM):
+    def __init__(self, hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:
         if not isinstance(hash_algorithm, KeyHashAlgorithm):
             raise SSHKeyError('SSH key hash algorithm must be an KeyHashAlgorithm enum value')
         self.hash_algorithm = hash_algorithm
         self.__key_attributes__ = {}
         self.path = None
 
-    def __compare__(self, operator, default, other):
+    def __compare__(self, operator, default, other) -> int:
         """
         Common compare method for sorting
         """
@@ -59,14 +59,14 @@ class SSHKeyLoader(RichComparisonObject):
             return operator(self.hash, other)
         return super().__compare__(operator, default, other)
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> int:
         if self.path is not None and isinstance(other, Path):
             return self.path == other
         if isinstance(other, str):
             return self.hash == other
         return super().__eq__(other)
 
-    def __load_key_attributes__(self):
+    def __load_key_attributes__(self) -> None:
         """
         Load key attributes to the class
 
@@ -74,7 +74,7 @@ class SSHKeyLoader(RichComparisonObject):
         """
         raise NotImplementedError('__load_key_attributes__() must be implemented in child class')
 
-    def __parse_key_info_line__(self, line):
+    def __parse_key_info_line__(self, line: str) -> None:
         """
         Parse key attributes from key info line
         """
@@ -88,7 +88,7 @@ class SSHKeyLoader(RichComparisonObject):
         for attr in KEY_INTEGER_ATTRIBUTES:
             self.__key_attributes__[attr] = int(self.__key_attributes__[attr])
 
-    def __get_key_attribute__(self, attr):
+    def __get_key_attribute__(self, attr: str) -> str:
         """
         Get key attribute for key.
 
@@ -102,28 +102,28 @@ class SSHKeyLoader(RichComparisonObject):
             raise SSHKeyError(f'Unexpected SSH key attribute: {attr}') from error
 
     @property
-    def bits(self):
+    def bits(self) -> int:
         """
         Return key bits as integer
         """
         return self.__get_key_attribute__('bits')
 
     @property
-    def hash(self):
+    def hash(self) -> str:
         """
         Return key checksum hash as string
         """
         return self.__get_key_attribute__('hash')
 
     @property
-    def key_type(self):
+    def key_type(self) -> str:
         """
         Return key type as string
         """
         return self.__get_key_attribute__('key_type')
 
     @property
-    def comment(self):
+    def comment(self) -> str:
         """
         Return key comment as string
         """

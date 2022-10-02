@@ -3,15 +3,20 @@ Configuration file processing for SSH assets utility
 """
 
 from pathlib import Path
+from typing import Optional, TYPE_CHECKING
 
 import yaml
 
+from sys_toolkit.configuration.base import ConfigurationSection
 from sys_toolkit.configuration.yaml import YamlConfiguration
 
 from ..exceptions import SSHAssetsError
 
 from .groups import GroupListConfigurationSection
 from .keys import SshKeyListConfigurationSection
+
+if TYPE_CHECKING:
+    from ..session import SshAssetSession
 
 
 class SshAssetsConfiguration(YamlConfiguration):
@@ -25,11 +30,16 @@ class SshAssetsConfiguration(YamlConfiguration):
         SshKeyListConfigurationSection,
     )
 
-    def __init__(self, session, path=None, parent=None, debug_enabled=False, silent=False):
+    def __init__(self,
+                 session: 'SshAssetSession',
+                 path: Optional[str] = None,
+                 parent: Optional[ConfigurationSection] = None,
+                 debug_enabled: bool = False,
+                 silent: bool = False) -> None:
         self.__session__ = session
         super().__init__(path=path, parent=parent, debug_enabled=debug_enabled, silent=silent)
 
-    def as_dict(self):
+    def as_dict(self) -> dict:
         """
         Return configuration as dictionary
         """
@@ -39,13 +49,13 @@ class SshAssetsConfiguration(YamlConfiguration):
             'keys': [key.as_dict() for key in self.keys],
         }
 
-    def as_yaml(self):
+    def as_yaml(self) -> str:
         """
         Return configuration as YAML stream
         """
         return yaml.dump(self.as_dict(), Dumper=SSHAssetsConfigurationDumper)
 
-    def save(self, path=None):
+    def save(self, path: Optional[str] = None) -> None:
         """
         Save configuration to specified file. If not path is specified original path is used.
         """

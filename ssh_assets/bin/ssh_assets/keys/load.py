@@ -1,6 +1,7 @@
 """
 CLI 'ssh-assets' subcommand 'load-keys'
 """
+from argparse import ArgumentParser, Namespace
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
@@ -26,7 +27,7 @@ class LoadKeysCommand(SshKeysCommand):
     name = 'load'
     usage = USAGE
 
-    def register_parser_arguments(self, parser):
+    def register_parser_arguments(self, parser: ArgumentParser) -> ArgumentParser:
         """
         Register various parser arguments
         """
@@ -39,11 +40,14 @@ class LoadKeysCommand(SshKeysCommand):
         return parser
 
     # pylint: disable=unused-argument
-    def run(self, args, namespace=None):
+    def run(self, args: Namespace) -> None:
         """
         Load SSH keys to the SSH agent
         """
         if not args.groups and not args.keys:
             self.session.agent.load_keys_to_agent(load_all_keys=args.all)
         else:
-            self.session.agent.load_keys_to_agent(keys=self.filter_keys(args), load_all_keys=True)
+            self.session.agent.load_keys_to_agent(
+                keys=self.filter_keys(args),
+                load_all_keys=True
+            )

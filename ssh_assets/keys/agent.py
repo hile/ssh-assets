@@ -6,6 +6,7 @@ Allows listing, loading and flushing SSH keys loaded to SSH agent
 
 import os
 from pathlib import Path
+from typing import List, Optional, TYPE_CHECKING
 
 from sys_toolkit.collection import CachedMutableSequence
 from sys_toolkit.exceptions import CommandError
@@ -19,21 +20,24 @@ from .constants import (
     SSH_AUTH_SOCK_ENV_VAR,
     SSH_AGENT_NO_KEYS_MESSAGE,
 )
+if TYPE_CHECKING:
+    from ..configuration.keys import SshKeyListConfigurationSection
+    from ..session import SshAssetSession
 
 
 class AgentKey(SSHKeyLoader):
     """
     SSH key details from SSH agent key listing
     """
-    def __init__(self, line, hash_algorithm):
+    def __init__(self, line: str, hash_algorithm: str):
         super().__init__(hash_algorithm)
         self.line = line
         self.__parse_key_info_line__(line)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.line
 
-    def __load_key_attributes__(self):
+    def __load_key_attributes__(self) -> None:
         """
         This method is not required for agent keys, because the key data is provided
         when object is initialized by 'line' parameter
@@ -45,12 +49,14 @@ class SshAgent(CachedMutableSequence):
     """
     Class to list, load and flush keys from ssh agent
     """
-    def __init__(self, session, hash_algorithm=DEFAULT_KEY_HASH_ALGORITHM):
+    def __init__(self,
+                 session: 'SshAssetSession',
+                 hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:
         self.session = session
         self.hash_algorithm = hash_algorithm
 
     @property
-    def configured_keys(self):
+    def configured_keys(self) -> 'SshKeyListConfigurationSection':
         """
         Return SSH keys configured in the SSH assets configuration file
         """
@@ -58,14 +64,14 @@ class SshAgent(CachedMutableSequence):
         return self.session.configuration.keys
 
     @property
-    def agent_socket_path(self):
+    def agent_socket_path(self) -> str:
         """
         Return SSH agent socket path from environment variable
         """
         return os.environ.get(SSH_AUTH_SOCK_ENV_VAR, None)
 
     @property
-    def is_available(self):
+    def is_available(self) -> bool:
         """
         Check if SSH agent is configured
 
@@ -80,7 +86,7 @@ class SshAgent(CachedMutableSequence):
             return False
         return os.access(path, os.R_OK | os.W_OK)
 
-    def update(self):
+    def update(self) -> None:
         """
         Update list of keys loaded to the ssh agent
         """
@@ -104,7 +110,7 @@ class SshAgent(CachedMutableSequence):
         self.__finish_update__()
 
     @staticmethod
-    def unload_keys_from_agent(keys=None, unload_all_keys=False):
+    def unload_keys_from_agent(keys: Optional[List[str]] = None, unload_all_keys: bool = False) -> None:
         """
         Unload any named or configured keys from SSH agent
 
@@ -123,7 +129,7 @@ class SshAgent(CachedMutableSequence):
             if key.loaded:
                 key.unload_from_agent()
 
-    def load_keys_to_agent(self, keys=None, load_all_keys=False):
+    def load_keys_to_agent(self, keys: Optional[List[str]] = None, load_all_keys: bool = False) -> None:
         """
         Load any available configured keys
 
@@ -137,4 +143,6 @@ class SshAgent(CachedMutableSequence):
             if not key.loaded and key.available:
                 key.load_to_agent()
                 if key.minimum_expire:
-                    self.session.configuration.message(f'key {key} loaded with expiration value {key.minimum_expire}')
+                    self.session.configuration.message(
+                        f'key {key} loaded with expiration value {key.minimum_expire}'
+                    )
