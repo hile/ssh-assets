@@ -38,6 +38,8 @@ ssh-assets keys load
 ssh-assets keys load --group personal
 ssh-assets keys edit personal --no-autoload
 ssh-assets keys edit personal --autoload
+ssh-assets keys add demo --path ~/.ssh/id_rsa.demo --autoload --expire=8h
+ssh-assets keys delete demo
 ```
 
 ## SSH assets configuration file
