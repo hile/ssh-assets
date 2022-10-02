@@ -218,6 +218,16 @@ class SshKeyListConfigurationSection(ConfigurationList):
         super().__init__(setting, data, parent)
         self.__key_name_lookup__ = {}
 
+    def __delitem__(self, key: SshKeyConfiguration) -> None:
+        """
+        Delete specified key from configuration
+        """
+        for index, item in enumerate(self.__values__):
+            if item == key:
+                del self.__values__[index]
+                del self.__key_name_lookup__[item.name]
+                break
+
     @property
     def available(self) -> List[SshKeyConfiguration]:
         """
@@ -247,6 +257,18 @@ class SshKeyListConfigurationSection(ConfigurationList):
             return self.__key_name_lookup__[name]
         except KeyError:
             return None
+
+    def delete_key(self, name: str) -> None:
+        """
+        Delete named eky from configuration
+        """
+        modified = False
+        key = self.get_key_by_name(name)
+        if key:
+            del self[key.name]
+            modified = True
+        if modified:
+            self.__parent__.save()
 
     def configure_key(self, name: str, **kwargs) -> None:
         """

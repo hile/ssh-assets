@@ -24,9 +24,8 @@ from .conftest import (
     MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT,
     MOCK_BASIC_CONFIG_AUTOLOAD_KEYS_COUNT,
     MOCK_BASIC_CONFIG_KEYS_COUNT,
+    MOCK_UNKNOWN_KEY_NAME,
 )
-
-MOCK_UNKNOWN_KEY_NAME = 'nosuchkey'
 
 EXPECTED_MINUMUM_EXPIRATION_VALUES = {
     'test': '1d',
@@ -393,6 +392,42 @@ def test_configuration_update_group_keys_list_valid(mock_temporary_config):
 
     mock_temporary_config.unlink()
     group_configuration.configure_group(group.name, keys=[key.name])
+    assert not mock_temporary_config.is_file()
+
+
+def test_configuration_delitem_unknown_key(mock_temporary_config):
+    """
+    Test __delitem__ method with unknown key name
+    """
+    session = SshAssetSession()
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    assert len(key_configuration) == MOCK_BASIC_CONFIG_KEYS_COUNT
+    del key_configuration[MOCK_UNKNOWN_KEY_NAME]
+    assert len(key_configuration) == MOCK_BASIC_CONFIG_KEYS_COUNT
+
+
+def test_configuration_delete_key(mock_temporary_config, tmpdir):
+    """
+    Test deleting a key from configuration
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    deleted_key = key_configuration[0]
+
+    key_count = len(key_configuration)
+    key_configuration.delete_key(deleted_key.name)
+    assert key_count == len(key_configuration) + 1
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    key_count = len(key_configuration)
+    key_configuration.delete_key(deleted_key.name)
+    # No changes, configuration is not saved
     assert not mock_temporary_config.is_file()
 
 

@@ -29,6 +29,8 @@ MOCK_AGENT_OUTPUT = MOCK_DATA.joinpath('keys/agent.txt')
 MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
 MOCK_AGENT_KEY_COUNT = 12
 
+MOCK_UNKNOWN_KEY_NAME = 'nosuchkey'
+
 FILE_READONLY = int('0400', 8)
 FILE_NO_PERMISSION = int('0000', 8)
 FILE_READWRITE = int('0640', 8)
