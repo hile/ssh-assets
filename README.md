@@ -16,6 +16,14 @@ This library can:
 - load and unload keys to the agent based on custom configuration file, without asking key password
   if the key was already loaded
 
+# Installing
+
+This tool can be installed from PyPI.
+
+```bash
+pip install ssh-assets
+```
+
 ## Using the CLI tool
 
 This package installs command line utility `ssh-assets`. The tool currently has
@@ -26,14 +34,10 @@ Following command loads any keys not yet loaded to the agent, but limits this
 to the keys with `autoload` property set to `true`:
 
 ```bash
-ssh-assets load-keys
-```
-
-Following command loads all available keys not yet loaded to the agent,
-ignoring value of `autoload` flag:
-
-```bash
-ssh-assets load-keys --all
+ssh-assets keys load
+ssh-assets keys load --group personal
+ssh-assets keys edit personal --no-autoload
+ssh-assets keys edit personal --autoload
 ```
 
 ## SSH assets configuration file
@@ -45,18 +49,34 @@ Example configuration file:
 
 ```yaml
 ---
+groups:
+  - name: personal
+    expire: 5d
+    keys:
+      - personal
+      - missing-demo-key
+  - name: work
+    expire: 1d
+    keys:
+      - aws
+      - master
+      - myproject
 keys:
-  - name: Demo
+  - name: personal
     path: ~/.ssh/id_rsa
     autoload: true
-  - name: Project key
+  - name: aws
+    path: ~/.ssh/id_rsa-aws
+  - name: myproject
     path: ~/Work/Keys/ssh_project_id
     autoload: true
-  - name: Master key
+  - name: master
+    expire: 1d
     path: ~/Work/Keys/master_ssh_key
 ```
 
-Flag `autoload` defaults to False in configuration if not specified.
+- `autoload` defaults to False in configuration if not specified.
+- `expore` defines a valid value for key expiration in SSH agent, for example `8h` or `5d`
 
 ## Example python code
 
