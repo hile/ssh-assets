@@ -30,7 +30,7 @@ tests_no_zope = ["cloudpickle", "coverage[toml] (>=5.0.2)", "hypothesis", "mypy 
 
 [[package]]
 name = "cli-toolkit"
-version = "2.2.2"
+version = "2.2.4"
 description = "Classes to implement CLI commands in python"
 category = "main"
 optional = false
@@ -305,7 +305,7 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "sys-toolkit"
-version = "2.2.2"
+version = "2.2.4"
 description = "Classes for operating system utilities"
 category = "main"
 optional = false
@@ -389,7 +389,7 @@ python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,>=2.7"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "c3be267493c32669710bf816fd9a7bf5de811cbca37128ff376347f39a8f0108"
+content-hash = "a48857a0195b145fa068c45d7944bdd9ac62adaa730a07d81c53ba94d7781daf"
 
 [metadata.files]
 astroid = [
@@ -401,8 +401,8 @@ attrs = [
     {file = "attrs-22.1.0.tar.gz", hash = "sha256:29adc2665447e5191d0e7c568fde78b21f9672d344281d0c6e1ab085429b22b6"},
 ]
 cli-toolkit = [
-    {file = "cli-toolkit-2.2.2.tar.gz", hash = "sha256:87fca5ec72e6d57769c2db14856b51fad28945927922fdbbd5dbe9acb198671d"},
-    {file = "cli_toolkit-2.2.2-py3-none-any.whl", hash = "sha256:ad636d15ac1fd9b0513711a3ee02a7dd6dbf67296d4ca8c87e32c6282d515035"},
+    {file = "cli-toolkit-2.2.4.tar.gz", hash = "sha256:bc1de4ad36b02da1734ca4c4de2efe9662d5e62e8e4fcaa742496f6f8daacb37"},
+    {file = "cli_toolkit-2.2.4-py3-none-any.whl", hash = "sha256:0c33692b2ec7cc74d4741636b0582aacebbef384e08b8595f7dd31839e1d5220"},
 ]
 colorama = [
     {file = "colorama-0.4.5-py2.py3-none-any.whl", hash = "sha256:854bf444933e37f5824ae7bfc1e98d5bce2ebe4160d46b5edf346a89358e99da"},
@@ -621,8 +621,8 @@ six = [
     {file = "six-1.16.0.tar.gz", hash = "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"},
 ]
 sys-toolkit = [
-    {file = "sys-toolkit-2.2.2.tar.gz", hash = "sha256:5d89f5a71120d3e04ef9df58eb6717113ac53d4bcead229119f6d3d927a2b434"},
-    {file = "sys_toolkit-2.2.2-py3-none-any.whl", hash = "sha256:97040bc6995c5758de9826c9e70d2672cf888935eddd412a8c882d2f1f269236"},
+    {file = "sys-toolkit-2.2.4.tar.gz", hash = "sha256:6b414824543683387ed60526568a3f54fea876b313dccd0de324bf0858dcbf1c"},
+    {file = "sys_toolkit-2.2.4-py3-none-any.whl", hash = "sha256:ff3319cd8e05f3b5c9394933fcd017d0b3bc47818447f9909d220bb4075a4bea"},
 ]
 tomli = [
     {file = "tomli-2.0.1-py3-none-any.whl", hash = "sha256:939de3e7a6161af0c887ef91b7d41a53e7c5a1ca976325f429cb46ea9bc30ecc"},
