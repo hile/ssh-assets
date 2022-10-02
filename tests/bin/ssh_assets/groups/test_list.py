@@ -1,5 +1,5 @@
 """
-Unit tests for ssh_assets.bin.ssh_assets.config.groups.list module
+Unit tests for ssh_assets.bin.ssh_assets.groups.list module
 """
 
 from cli_toolkit.tests.script import validate_script_run_exception_with_args

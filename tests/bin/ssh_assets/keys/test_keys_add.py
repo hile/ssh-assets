@@ -47,12 +47,23 @@ def test_ssh_assets_cli_keys_add_invalid_expire(mock_temporary_config, monkeypat
 
 
 # pylint: disable=unused-argument
-def test_ssh_assets_cli_keys_add_argument_conflict(mock_temporary_config, monkeypatch, capsys):
+def test_ssh_assets_cli_keys_add_autoloadargument_conflict(mock_temporary_config, monkeypatch, capsys):
     """
     Test running 'ssh-assets keys add' with confilicting arguments
     """
     script = SshAssetsScript()
     testargs = ['ssh-assets', 'keys', 'add', '--autoload', '--no-autoload', MOCK_BASIC_CONFIG_EXISTING_KEY]
+    with monkeypatch.context() as context:
+        validate_script_run_exception_with_args(script, context, testargs, exit_code=1)
+
+
+# pylint: disable=unused-argument
+def test_ssh_assets_cli_keys_add_expire_argument_conflict(mock_temporary_config, monkeypatch, capsys):
+    """
+    Test running 'ssh-assets keys add' with confilicting arguments
+    """
+    script = SshAssetsScript()
+    testargs = ['ssh-assets', 'keys', 'add', '--expire=3d', '--no-expire', MOCK_BASIC_CONFIG_EXISTING_KEY]
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=1)
 

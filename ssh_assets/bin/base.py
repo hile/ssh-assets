@@ -11,6 +11,7 @@ from cli_toolkit.command import Command
 
 from ..configuration.groups import GroupListConfigurationSection
 from ..configuration.keys import SshKeyListConfigurationSection, SshKeyConfiguration
+from ..duration import Duration
 from ..keys.agent import SshAgent
 from ..session import SshAssetSession
 
@@ -39,6 +40,13 @@ class SshAssetsCommand(Command):
         """
         args = super().parse_args(args, namespace)
         self.session = SshAssetSession()
+
+        if getattr(args, 'expire', None) is not None:
+            try:
+                args.expire = Duration(args.expire)
+            except ValueError:
+                self.exit(1, f'Invalid key expiration value: {args.expire}')
+
         if args.groups:
             args.groups = [var for arg in args.groups for var in arg.split(',')]
             args.group_matches = []

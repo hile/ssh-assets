@@ -3,7 +3,6 @@ Base command for 'ssh-assets keys' subcommands
 """
 from argparse import ArgumentParser, Namespace
 
-from ssh_assets.duration import Duration
 from ...base import SshAssetsCommand
 
 
@@ -58,6 +57,7 @@ class SshKeyEditCommand(SshKeyCommand):
         parser.add_argument('-a', '--autoload', action='store_true', help='Enable key automatically')
         parser.add_argument('-n', '--no-autoload', action='store_true', help='Disable key automatically')
         parser.add_argument('-e', '--expire', help='Key expiration time')
+        parser.add_argument('-E', '--no-expire', action='store_true', help='Delete key expiration time')
         parser.add_argument('--path', help='Path to the key file')
         return parser
 
@@ -66,16 +66,10 @@ class SshKeyEditCommand(SshKeyCommand):
         Parse args and check for conflicting values
         """
         args = super().parse_args(args, namespace)
-
-        if args.expire:
-            try:
-                args.expire = Duration(args.expire)
-            except ValueError:
-                self.exit(1, f'Invalid key expiration value: {args.expire}')
-
         if args.autoload and args.no_autoload:
             self.exit(1, 'Conflicting arguments --autoload and --no-autoload')
-
+        if args.expire and args.no_expire:
+            self.exit(1, 'Conflicting arguments --expire and --no-expire')
         return args
 
     def get_update_kwargs(self, args: Namespace) -> dict:
