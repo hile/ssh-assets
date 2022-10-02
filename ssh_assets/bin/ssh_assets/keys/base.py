@@ -6,7 +6,7 @@ from argparse import ArgumentParser, Namespace
 from ...base import SshAssetsCommand
 
 
-class SshKeysCommand(SshAssetsCommand):
+class SshKeyListCommand(SshAssetsCommand):
     """
     SSH assets CLI command for commands that process SSH keys
 

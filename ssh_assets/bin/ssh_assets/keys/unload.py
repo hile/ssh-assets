@@ -5,7 +5,7 @@ from argparse import ArgumentParser, Namespace
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from .base import SshKeysCommand
+from .base import SshKeyListCommand
 
 USAGE = f"""Unload configured SSH keys from agent
 
@@ -18,7 +18,7 @@ normal 'ssh-add -D' call.
 """
 
 
-class UnLoadKeysCommand(SshKeysCommand):
+class UnLoadKeysCommand(SshKeyListCommand):
     """
     Subcommand to unload SSH keys to agent
     """

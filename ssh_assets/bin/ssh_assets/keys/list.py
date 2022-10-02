@@ -5,7 +5,7 @@ from argparse import ArgumentParser, Namespace
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
 
-from .base import SshKeysCommand
+from .base import SshKeyListCommand
 
 USAGE = """List SSH keys
 """
@@ -17,7 +17,7 @@ SSH keys configured in the SSH assets configuration file.
 """
 
 
-class ListKeysCommand(SshKeysCommand):
+class ListKeysCommand(SshKeyListCommand):
     """
     Subcommand to list SSH keys in assets configuration and loaded to the agent
     """
