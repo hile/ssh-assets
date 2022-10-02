@@ -1,5 +1,5 @@
 """
-Unit tests for 'ssh-assets list-keys' CLI command
+Unit tests for 'ssh-assets keys list' CLI command
 """
 
 from cli_toolkit.tests.script import validate_script_run_exception_with_args
