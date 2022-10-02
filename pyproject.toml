@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.4.1"
+version = "1.5.0"
 description = "SSH asset and key management tools"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]
 license = "PSF"
