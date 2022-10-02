@@ -1,9 +1,14 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.6.0"
+version = "1.6.1"
 description = "SSH asset and key management tools"
+homepage = "https://github.com/hile/ssh-assets"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]
-license = "PSF"
+include = [
+    "LICENSE",
+]
+license = "PSF-2.0"
+readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.9"
