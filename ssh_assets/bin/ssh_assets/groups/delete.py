@@ -1,31 +1,31 @@
 """
-CLI 'ssh-assets config groups edit'
+CLI 'ssh-assets config groups delete'
 """
 from argparse import Namespace
 
 from .base import SshKeyGroupEditCommand
 
 USAGE = """
-Edit existing key group in SSH assets configuration
+Delete existing key group from SSH assets configuration
 """
 
 DESCRIPTION = """
 """
 
 
-class EditGroupCommand(SshKeyGroupEditCommand):
+class DeleteGroupCommand(SshKeyGroupEditCommand):
     """
-    Subcommand to edit SSH assets configuration group
+    Subcommand to delete SSH assets configuration group
     """
-    name = 'edit'
+    name = 'delete'
     usage = USAGE
     description = DESCRIPTION
 
     def run(self, args: Namespace) -> None:
         """
-        Edit a key to the configuration
+        Delete a key to the configuration
         """
         group = self.groups.get_group_by_name(args.name)
         if not group:
             self.exit(1, f'Group not configured: {args.name}')
-        self.groups.configure_group(args.name, **self.get_update_kwargs(args))
+        self.groups.delete_group(args.name)
