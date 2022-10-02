@@ -23,6 +23,8 @@ from .conftest import (
     FILE_READONLY,
     MOCK_BASIC_CONFIG_AVAILABLE_KEYS_COUNT,
     MOCK_BASIC_CONFIG_AUTOLOAD_KEYS_COUNT,
+    MOCK_BASIC_CONFIG_GROUP_COUNT,
+    MOCK_BASIC_CONFIG_EXISTING_GROUP,
     MOCK_BASIC_CONFIG_KEYS_COUNT,
     MOCK_UNKNOWN_KEY_NAME,
 )
@@ -292,7 +294,7 @@ def test_configuration_save_different_filename(mock_temporary_config):
     assert testfile.is_file()
 
 
-def test_configuration_add_new_group(mock_temporary_config, tmpdir):
+def test_configuration_add_new_group(mock_temporary_config):
     """
     Test adding new group to configuration
     """
@@ -310,7 +312,7 @@ def test_configuration_add_new_group(mock_temporary_config, tmpdir):
     assert mock_temporary_config.is_file()
 
 
-def test_configuration_update_group_expire(mock_temporary_config, tmpdir):
+def test_configuration_update_group_expire(mock_temporary_config):
     """
     Test updating a group in SSH assets configuration with the temporary configuration file
     that can be deleted. This test case updates group expire field
@@ -395,7 +397,7 @@ def test_configuration_update_group_keys_list_valid(mock_temporary_config):
     assert not mock_temporary_config.is_file()
 
 
-def test_configuration_delitem_unknown_key(mock_temporary_config):
+def test_configuration_keys_delitem_unknown_key(mock_temporary_config):
     """
     Test __delitem__ method with unknown key name
     """
@@ -407,7 +409,44 @@ def test_configuration_delitem_unknown_key(mock_temporary_config):
     assert len(key_configuration) == MOCK_BASIC_CONFIG_KEYS_COUNT
 
 
-def test_configuration_delete_key(mock_temporary_config, tmpdir):
+def test_configuration_groups_delitem_unknown_key(mock_temporary_config):
+    """
+    Test __delitem__ method with unknown group name
+    """
+    session = SshAssetSession()
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    assert len(group_configuration) == MOCK_BASIC_CONFIG_GROUP_COUNT
+    del group_configuration[MOCK_UNKNOWN_KEY_NAME]
+    assert len(group_configuration) == MOCK_BASIC_CONFIG_GROUP_COUNT
+
+
+def test_configuration_groups_delete_group(mock_temporary_config):
+    """
+    Test deleting a group from configuration
+    """
+    session = SshAssetSession()
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    # pylint: disable=no-member
+    group_configuration = session.configuration.groups
+    deleted_group = group_configuration.get_group_by_name(MOCK_BASIC_CONFIG_EXISTING_GROUP)
+
+    print('delete', deleted_group)
+    group_count = len(group_configuration)
+    group_configuration.delete_group(deleted_group.name)
+    assert group_count == len(group_configuration) + 1
+    assert mock_temporary_config.is_file()
+    mock_temporary_config.unlink()
+
+    group_count = len(group_configuration)
+    group_configuration.delete_group(deleted_group.name)
+    # No changes, configuration is not saved
+    assert not mock_temporary_config.is_file()
+
+
+def test_configuration_delete_key(mock_temporary_config):
     """
     Test deleting a key from configuration
     """
@@ -466,7 +505,7 @@ def test_configuration_update_key_path(mock_temporary_config, tmpdir):
     assert not mock_temporary_config.is_file()
 
 
-def test_configuration_update_key_expire(mock_temporary_config, tmpdir):
+def test_configuration_update_key_expire(mock_temporary_config):
     """
     Test updating a key in SSH assets configuration with the temporary configuration file
     that can be deleted. This test case updates 'expire' value
@@ -490,7 +529,7 @@ def test_configuration_update_key_expire(mock_temporary_config, tmpdir):
     assert mock_temporary_config.is_file()
 
 
-def test_configuration_update_key_autoload(mock_temporary_config, tmpdir):
+def test_configuration_update_key_autoload(mock_temporary_config):
     """
     Test updating a key in SSH assets configuration with the temporary configuration file
     that can be deleted. This test case updates autoload field

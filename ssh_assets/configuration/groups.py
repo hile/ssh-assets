@@ -103,6 +103,15 @@ class GroupListConfigurationSection(ConfigurationList):
     __dict_loader_class__ = GroupConfiguration
     __name__ = 'groups'
 
+    def __delitem__(self, name: str) -> None:
+        """
+        Delete specified key from configuration
+        """
+        for index, item in enumerate(self.__values__):
+            if item.name == name:
+                del self.__values__[index]
+                break
+
     def get_group_by_name(self, name: str) -> GroupConfiguration:
         """
         Return configured group by name
@@ -115,6 +124,18 @@ class GroupListConfigurationSection(ConfigurationList):
             if group.name == name:
                 return group
         return None
+
+    def delete_group(self, name: str) -> None:
+        """
+        Delete named eky from configuration
+        """
+        modified = False
+        key = self.get_group_by_name(name)
+        if key:
+            del self[key.name]
+            modified = True
+        if modified:
+            self.__parent__.save()
 
     def configure_group(self, name: str, **kwargs) -> None:
         """
