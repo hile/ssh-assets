@@ -1,7 +1,7 @@
 """
 Configuration parser for 'keys' configuration section in SSH assets configuration
 """
-
+from operator import eq, ne, ge, gt, le, lt
 from pathlib import Path
 from typing import List, Optional
 
@@ -36,6 +36,37 @@ class SshKeyConfiguration(ConfigurationSection):
         super().__init__(data, parent, debug_enabled, silent)
         self.expire = Duration(self.expire) if self.expire is not None else None
         self.private_key = SSHKeyFile(self.path)
+
+    def __compare_method__(self, other, method, default: bool) -> int:
+        """
+        Deep compare for keys
+        """
+        if isinstance(other, str):
+            return method(self.name, other)
+        for attr in ('name', 'path'):
+            a = getattr(self, attr)
+            b = getattr(other, attr)
+            if a != b:
+                return method(a, b)
+        return default
+
+    def __eq__(self, other):
+        return self.__compare_method__(other, eq, True)
+
+    def __ne__(self, other):
+        return self.__compare_method__(other, ne, False)
+
+    def __ge__(self, other):
+        return self.__compare_method__(other, ge, True)
+
+    def __gt__(self, other):
+        return self.__compare_method__(other, gt, False)
+
+    def __le__(self, other):
+        return self.__compare_method__(other, le, True)
+
+    def __lt__(self, other):
+        return self.__compare_method__(other, lt, True)
 
     def __repr__(self) -> str:
         return str(self.name) if self.name else ''

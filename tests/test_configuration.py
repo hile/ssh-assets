@@ -130,6 +130,39 @@ def test_load_basic_config_lookup_existing(mock_basic_config):
         assert item == key
 
 
+def test_load_basic_config_key_comparison(mock_basic_config):
+    """
+    Mock testing key comparison methods
+    """
+    session = SshAssetSession()
+    # pylint: disable=no-member
+    key_configuration = session.configuration.keys
+    a = key_configuration[0]
+    b = key_configuration[1]
+
+    assert a == a  # pylint:disable=comparison-with-itself
+    assert a == str(a)
+    assert a != b
+    assert a != str(b)
+
+    assert a <= str(a)
+    assert b >= str(b)
+
+    assert a < b
+    assert a < str(b)
+    assert a <= b
+    assert a <= str(b)
+
+    assert b <= b  # pylint:disable=comparison-with-itself
+    assert a <= str(b)
+    assert b > a
+    assert b > str(a)
+    assert b >= a
+    assert b >= str(a)
+    assert b >= b  # pylint:disable=comparison-with-itself
+    assert b >= str(b)
+
+
 def test_load_basic_config_lookup_invalid_name(mock_basic_config):
     """
     Look up keys by invalid name from mock basic configuration
