@@ -16,7 +16,7 @@ from ....conftest import (
 # pylint: disable=unused-argument
 def test_ssh_assets_cli_keys_delete_no_arguments(mock_temporary_config, monkeypatch, capsys):
     """
-    Test running 'ssh-assets keys edit' without any arguments
+    Test running 'ssh-assets keys delete' without any arguments
     """
     script = SshAssetsScript()
     testargs = ['ssh-assets', 'keys', 'delete']
