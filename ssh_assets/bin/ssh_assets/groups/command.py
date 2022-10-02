@@ -15,9 +15,9 @@ Change the configuration of SSH assets configuration groups
 """
 
 
-class ConfigGroupsCommand(Command):
+class GroupsCommand(Command):
     """
-    CLI command group 'ssh-assets config groups'
+    CLI command group 'ssh-assets groups'
     """
     name = 'groups'
     subcommands = (

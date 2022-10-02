@@ -1,8 +1,9 @@
 """
 CLI 'ssh-assets config groups'
 """
+from argparse import Namespace
 
-from ..base import AssetsConfigCommand
+from .base import SshKeyGroupsCommand
 
 USAGE = """
 List configured key groups
@@ -12,7 +13,7 @@ DESCRIPTION = """
 """
 
 
-class ListGroupsCommand(AssetsConfigCommand):
+class ListGroupsCommand(SshKeyGroupsCommand):
     """
     Subcommand to list SSH assets configuration groups
     """
@@ -20,7 +21,7 @@ class ListGroupsCommand(AssetsConfigCommand):
     usage = USAGE
     description = DESCRIPTION
 
-    def run(self, args):
+    def run(self, args: Namespace) -> None:
         """
         List the keys in asset configuration file or in the SSH agent
         """

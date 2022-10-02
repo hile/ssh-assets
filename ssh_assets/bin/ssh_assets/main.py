@@ -4,7 +4,7 @@ Command line tool 'ssh-assets'
 
 from cli_toolkit.script import Script
 
-from .config.command import ConfigCommand
+from .groups.command import GroupsCommand
 from .keys.command import KeysCommand
 
 USAGE = """SSH key and configuration file assets utility
@@ -23,12 +23,12 @@ class SshAssetsScript(Script):
     usage = USAGE
     description = DESCRIPTION
     subcommands = (
-        ConfigCommand,
+        GroupsCommand,
         KeysCommand,
     )
 
 
-def main():
+def main() -> None:
     """
     Main CLI entrypoint for the ssh-assets command
     """

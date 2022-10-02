@@ -15,7 +15,7 @@ def test_ssh_assets_cli_config_groups_list_empty_config(mock_empty_config, monke
     Test running command 'ssh-assets config groups list' with empty configuration
     """
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'config', 'groups', 'list']
+    testargs = ['ssh-assets', 'groups', 'list']
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 
@@ -30,7 +30,7 @@ def test_ssh_assets_cli_config_groups_list_basic_config(mock_basic_config, monke
     Test running command 'ssh-assets config groups list' with empty configuration
     """
     script = SshAssetsScript()
-    testargs = ['ssh-assets', 'config', 'groups', 'list']
+    testargs = ['ssh-assets', 'groups', 'list']
     with monkeypatch.context() as context:
         validate_script_run_exception_with_args(script, context, testargs, exit_code=0)
 
