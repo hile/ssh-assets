@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.6.3"
+version = "1.6.4"
 description = "SSH asset and key management tools"
 homepage = "https://github.com/hile/ssh-assets"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]
@@ -17,6 +17,7 @@ classifiers = [
     "Operating System :: Unix",
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
     "Topic :: Utilities",
 ]
 
@@ -39,5 +40,5 @@ tox = "^3"
 ssh-assets = "ssh_assets.bin.ssh_assets.main:main"
 
 [build-system]
-requires = ["poetry-core>=1.0.8"]
+requires = ["poetry-core>=1.3.2"]
 build-backend = "poetry.core.masonry.api"
