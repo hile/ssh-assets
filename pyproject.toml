@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.6.4"
+version = "1.6.5"
 description = "SSH asset and key management tools"
 homepage = "https://github.com/hile/ssh-assets"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]

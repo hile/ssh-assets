@@ -214,7 +214,9 @@ class SshKeyListConfigurationSection(ConfigurationList):
     def __init__(self,
                  setting: Optional[str] = None,
                  data: Optional[dict] = None,
-                 parent: ConfigurationSection = None) -> None:
+                 parent: ConfigurationSection = None,
+                 debug_enabled: bool = False,
+                 silent: bool = False) -> None:
         super().__init__(setting, data, parent)
         self.__key_name_lookup__ = {}
 
