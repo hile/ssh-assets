@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.6.6"
+version = "1.6.7"
 description = "SSH asset and key management tools"
 homepage = "https://github.com/hile/ssh-assets"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]
@@ -25,16 +25,16 @@ classifiers = [
 python = "^3.9"
 cli-toolkit = "^2.2"
 
-[tool.poetry.dev-dependencies]
-coverage = "^6.1"
-flake8 = "^5.0"
+[tool.poetry.group.dev.dependencies]
+coverage = "^7"
+flake8 = "^6"
 flake8-bugbear = "^22"
-flake8-quotes = "^3.3"
-pycodestyle = "^2.8"
-pyflakes = "^2.4"
+flake8-quotes = "^3"
+pycodestyle = "^2"
+pyflakes = "^3"
 pylint = "^2"
-pytest = "^7.1"
-tox = "^3"
+pytest = "^7"
+tox = "^4"
 
 [tool.poetry.scripts]
 ssh-assets = "ssh_assets.bin.ssh_assets.main:main"

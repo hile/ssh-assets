@@ -160,7 +160,6 @@ def mock_agent_dummy_socket(mock_agent_dummy_env):
     Mock a dummy SSH agent socket environment variable with creating a dummy SSH agent
     socket (nothing really listening to it)
     """
-    print(mock_agent_dummy_env)
     agent_socket = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
     agent_socket.bind(str(mock_agent_dummy_env))
     mock_agent_dummy_env.chmod(FILE_READWRITE)
