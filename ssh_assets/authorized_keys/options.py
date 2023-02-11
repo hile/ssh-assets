@@ -1,10 +1,10 @@
 """
 Parser for OpenSSH authorized keys line command options
 """
-
 import re
 
 from operator import ge, gt, le, lt
+from typing import Any, Callable, Tuple, Union
 
 from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
@@ -26,14 +26,16 @@ class AuthorizedKeyOptionFlag(RichComparisonObject):
     """
     Flag without value in authorized keys options
     """
-    __compare_attributes__ = ('option',)
+    option: str
 
-    def __init__(self, option):
+    __compare_attributes__: Tuple[str] = ('option',)
+
+    def __init__(self, option: str) -> None:
         if option not in AUTHRORIZED_KEYS_OPTION_FLAGS:
             raise SSHKeyError(f'Unexpected authorized-keys option flag: {option}')
         self.option = option
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.option}'
 
 
@@ -41,18 +43,21 @@ class AuthorizedKeyOptionValue(RichComparisonObject):
     """
     Option with value in authorized keys options
     """
-    __compare_attributes__ = ('option', 'value')
+    option: str
+    value: str
 
-    def __init__(self, option, value):
+    __compare_attributes__: Tuple[str] = ('option', 'value')
+
+    def __init__(self, option: str, value: str) -> None:
         if option not in AUTHRORIZED_KEYS_OPTION_VALUE_FLAGS:
             raise SSHKeyError(f'Unexpected authorized-keys option value: {option}={value}')
         self.option = option
         self.value = value
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'{self.option}="{self.value}"'
 
-    def __compare__(self, operator, default, other):
+    def __compare__(self, operator: Callable, default: bool, other: Any) -> bool:
         """
         Common compare method for sorting
         """
@@ -60,28 +65,28 @@ class AuthorizedKeyOptionValue(RichComparisonObject):
             return operator(self.option, other.option)
         return super().__compare__(operator, default, other)
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, AuthorizedKeyOptionFlag):
             return False
         return super().__eq__(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> bool:
         return self.__compare__(lt, False, other)
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> bool:
         return self.__compare__(gt, False, other)
 
-    def __le__(self, other):
+    def __le__(self, other: Any) -> bool:
         return self.__compare__(le, True, other)
 
-    def __ge__(self, other):
+    def __ge__(self, other: Any) -> bool:
         return self.__compare__(ge, True, other)
 
 
-def parse_option_flag(line):
+def parse_option_flag(line: str) -> Union[AuthorizedKeyOptionFlag, AuthorizedKeyOptionValue]:
     """
     Match plain authorized key option with no option value in middle of options or end of line'
 
@@ -89,7 +94,7 @@ def parse_option_flag(line):
 
     Returns
     ---
-    - Option name as string
+    - Option name as AuthorizedKeyOptionFlag or AuthorizedKeyOptionValue object
     - Rest of line without initial , in option string as string or None if end of line is reached
     """
     for pattern in RE_OPTION_NO_VALUE:

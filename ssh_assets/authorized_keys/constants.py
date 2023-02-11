@@ -1,7 +1,6 @@
 """
 Constants for OpenSSH authorized keys parsing
 """
-
 DEFAULT_AUTHORIZED_KEYS_FILE = '~/.ssh/authorized_keys'
 
 # Valid key types in authorized_keys files

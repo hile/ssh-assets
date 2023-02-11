@@ -5,6 +5,7 @@ Utility functions for ssh_assets module
 import re
 
 from datetime import timedelta
+from typing import Any, Tuple
 
 RE_TIME_VALUE = re.compile(r'^(?P<value>\d+)(?P<qualifier>[smhdw])(?P<rest>.*)$')
 
@@ -21,7 +22,7 @@ class Duration:
     """
     Time duration string as defined in 'TIME FORMATS' section of sshd manual page
     """
-    def __init__(self, value):
+    def __init__(self, value: str) -> None:
         self.__fields__ = {
             's': None,
             'm': None,
@@ -31,7 +32,7 @@ class Duration:
         }
         self.__parse_value__(value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return duration as string, with fields ordered correctly
         """
@@ -40,26 +41,26 @@ class Duration:
             for key, value in self.__fields__.items() if value is not None
         )
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         return str(self) == str(other)
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         return str(self) != str(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> bool:
         return str(self) < str(other)
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> bool:
         return str(self) > str(other)
 
-    def __le__(self, other):
+    def __le__(self, other: Any) -> bool:
         return str(self) <= str(other)
 
-    def __ge__(self, other):
+    def __ge__(self, other: Any) -> bool:
         return str(self) >= str(other)
 
     @staticmethod
-    def __parse_duration_field__(value):
+    def __parse_duration_field__(value: str) -> Tuple[str, int, str]:
         """
         Get a single time value from specified string
 
@@ -82,7 +83,7 @@ class Duration:
             raise ValueError
         return qualifier, value, rest
 
-    def __parse_value__(self, time_value):
+    def __parse_value__(self, time_value: str) -> None:
         """
         Parse specified duration value to fields in self.__fields__
 
@@ -107,7 +108,7 @@ class Duration:
             self.__fields__[qualifier] = value
 
     @property
-    def timedelta(self):
+    def timedelta(self) -> timedelta:
         """
         Convert data from fields to a datetime.timedelta value
 

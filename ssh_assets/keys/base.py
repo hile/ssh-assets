@@ -5,6 +5,7 @@ Base classes for SSH key file processing
 import re
 
 from pathlib import Path
+from typing import Any, Callable
 
 from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
@@ -40,6 +41,9 @@ class SSHKeyLoader(RichComparisonObject):
 
     Base class for SSH private and public keys
     """
+    hash_algorithm: str
+    __key_attributes__: dict
+
     __compare_attributes__ = KEY_COMPARE_ATTRIBUTES
 
     def __init__(self, hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:
@@ -49,7 +53,7 @@ class SSHKeyLoader(RichComparisonObject):
         self.__key_attributes__ = {}
         self.path = None
 
-    def __compare__(self, operator, default, other) -> int:
+    def __compare__(self, operator: Callable, default: bool, other: Any) -> bool:
         """
         Common compare method for sorting
         """
@@ -59,7 +63,7 @@ class SSHKeyLoader(RichComparisonObject):
             return operator(self.hash, other)
         return super().__compare__(operator, default, other)
 
-    def __eq__(self, other) -> int:
+    def __eq__(self, other) -> bool:
         if self.path is not None and isinstance(other, Path):
             return self.path == other
         if isinstance(other, str):

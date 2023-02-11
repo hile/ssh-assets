@@ -1,6 +1,8 @@
 """
 SSH assets manager session
 """
+from pathlib import Path
+from typing import Optional, Union
 
 from .authorized_keys import AuthorizedKeys
 from .constants import USER_CONFIGURATION_FILE
@@ -16,12 +18,14 @@ class SshAssetSession:
     This class binds asset manager configuration, SSH agent client and other resources
     together
     """
-    def __init__(self, configuration_file=None):
+    configuration: SshAssetsConfiguration
+
+    def __init__(self, configuration_file: Optional[Union[Path, str]] = None) -> None:
         configuration_file = configuration_file if configuration_file is not None else USER_CONFIGURATION_FILE
         self.configuration = SshAssetsConfiguration(self, configuration_file)
 
     @property
-    def agent(self):
+    def agent(self) -> SshAgent:
         """
         Return SSH agent object
 
@@ -30,7 +34,7 @@ class SshAssetSession:
         return SshAgent(self)
 
     @property
-    def user_authorized_keys(self):
+    def user_authorized_keys(self) -> AuthorizedKeys:
         """
         Return SSH authorized keys parser object for user default authorized keys file
 

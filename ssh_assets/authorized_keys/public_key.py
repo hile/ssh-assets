@@ -1,14 +1,14 @@
 """
 SSH keys public key entry in user authorized keys files and exported .pub files
 """
-
 from base64 import b64decode
+from typing import List, Tuple, Union
 
 from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
 
 from .constants import KEY_TYPES
-from .options import parse_option_flag
+from .options import AuthorizedKeyOptionFlag, AuthorizedKeyOptionValue, parse_option_flag
 
 
 # pylint: disable=too-few-public-methods
@@ -16,16 +16,21 @@ class PublicKey(RichComparisonObject):
     """
     Entry in OpenSSH authorized keys file
     """
-    __compare_attributes__ = ('key_type', 'base64',)
+    key_type: str
+    base_64: str
+    comment: str
+    options: List[Union[AuthorizedKeyOptionFlag, AuthorizedKeyOptionValue]]
 
-    def __init__(self, line):
+    __compare_attributes__: Tuple[str] = ('key_type', 'base64',)
+
+    def __init__(self, line: str) -> None:
         self.line = line
-        self.key_type, self.base64, self.options, self.comment = self.__parse_line__(line)
+        self.key_type, self.base64, self.comment, self.options = self.__parse_line__(line)
 
     def __repr__(self) -> str:
         return self.line
 
-    def __validate_base64__(self, base64_value):
+    def __validate_base64__(self, base64_value: str) -> str:
         """
         Validate the base64 encoded public key value in data is actually valid base64 data
         """
@@ -36,7 +41,7 @@ class PublicKey(RichComparisonObject):
         return base64_value
 
     @staticmethod
-    def __parse_options__(option_fields):
+    def __parse_options__(option_fields: str) -> List[Union[AuthorizedKeyOptionFlag, AuthorizedKeyOptionValue]]:
         """
         Parse options from specified option string
         """
@@ -49,7 +54,8 @@ class PublicKey(RichComparisonObject):
                 line = rest
         return options
 
-    def __parse_line__(self, line):
+    def __parse_line__(self, line: str) -> Tuple[
+            str, str, str, List[Union[AuthorizedKeyOptionFlag, AuthorizedKeyOptionValue]]]:
         """
         Parse the text entry for authorized keys item
         """
@@ -72,4 +78,4 @@ class PublicKey(RichComparisonObject):
 
         options = self.__parse_options__(option_fields)
 
-        return key_type, base64, options, comment
+        return key_type, base64, comment, options

@@ -3,6 +3,7 @@ Common base classes
 """
 
 from operator import ge, gt, le, lt
+from typing import Any, Callable
 
 
 class RichComparisonObject:
@@ -11,7 +12,7 @@ class RichComparisonObject:
     """
     __compare_attributes__ = ()
 
-    def __compare__(self, operator, default, other):
+    def __compare__(self, operator: Callable, default: bool, other: Any) -> bool:
         """
         Common compare method for sorting
         """
@@ -26,7 +27,7 @@ class RichComparisonObject:
                 return operator(a, b)
         return default
 
-    def __eq__(self, other):
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, str):
             return str(self) == other
         for attr in self.__compare_attributes__:
@@ -38,17 +39,17 @@ class RichComparisonObject:
                 return False
         return True
 
-    def __ne__(self, other):
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
-    def __lt__(self, other):
+    def __lt__(self, other: Any) -> bool:
         return self.__compare__(lt, False, other)
 
-    def __gt__(self, other):
+    def __gt__(self, other: Any) -> bool:
         return self.__compare__(gt, False, other)
 
-    def __le__(self, other):
+    def __le__(self, other: Any) -> bool:
         return self.__compare__(le, True, other)
 
-    def __ge__(self, other):
+    def __ge__(self, other: Any) -> bool:
         return self.__compare__(ge, True, other)

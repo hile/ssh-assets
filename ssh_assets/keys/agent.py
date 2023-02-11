@@ -29,6 +29,8 @@ class AgentKey(SSHKeyLoader):
     """
     SSH key details from SSH agent key listing
     """
+    line: str
+
     def __init__(self, line: str, hash_algorithm: str):
         super().__init__(hash_algorithm)
         self.line = line
@@ -49,6 +51,9 @@ class SshAgent(CachedMutableSequence):
     """
     Class to list, load and flush keys from ssh agent
     """
+    session: 'SshAssetSession'
+    hash_algorithm: str
+
     def __init__(self,
                  session: 'SshAssetSession',
                  hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:

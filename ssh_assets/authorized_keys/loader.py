@@ -1,13 +1,11 @@
 """
 Class to load OpenSSH authorized keys files
 """
-
 from pathlib import Path
 
 from sys_toolkit.collection import CachedMutableSequence
 
 from ..exceptions import SSHKeyError
-
 from .constants import DEFAULT_AUTHORIZED_KEYS_FILE
 from .public_key import PublicKey
 
@@ -16,11 +14,13 @@ class AuthorizedKeys(CachedMutableSequence):
     """
     List of OpenSSH authorized keys items
     """
-    def __init__(self, path=DEFAULT_AUTHORIZED_KEYS_FILE):
+    path: Path
+
+    def __init__(self, path: str = DEFAULT_AUTHORIZED_KEYS_FILE) -> None:
         super().__init__()
         self.path = Path(path).expanduser().resolve()
 
-    def update(self):
+    def update(self) -> None:
         """
         Update items in authorized keys file data by reading the file
         """
