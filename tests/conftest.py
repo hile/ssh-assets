@@ -17,6 +17,7 @@ from sys_toolkit.tests.mock import (
 import pytest
 
 from ssh_assets.keys.constants import SSH_AUTH_SOCK_ENV_VAR, SSH_AGENT_NO_KEYS_MESSAGE
+from ssh_assets.session import SshAssetSession
 
 MOCK_DATA = Path(__file__).parent.joinpath('mock')
 MOCK_BASIC_CONFIG = MOCK_DATA.joinpath('config/basic_config.yml')
@@ -195,3 +196,12 @@ def mock_agent_key_list(monkeypatch):
     mock_keys_list = MockRunCommandLineOutput(stdout=lines)
     monkeypatch.setattr('ssh_assets.keys.agent.run_command_lineoutput', mock_keys_list)
     return lines
+
+
+@pytest.fixture
+def mock_session(mock_temporary_config, mock_agent_key_list):
+    """
+    Generate a SSH assets session object for unit tests with temporary empty config
+    and mocked agent key list
+    """
+    yield SshAssetSession()

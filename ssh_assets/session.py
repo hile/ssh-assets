@@ -8,6 +8,7 @@ from .authorized_keys import AuthorizedKeys
 from .constants import USER_CONFIGURATION_FILE
 from .configuration import SshAssetsConfiguration
 from .keys.agent import SshAgent
+from .keys.filter_set import SshKeyFilterSet
 
 
 # pylint: disable=too-few-public-methods
@@ -41,3 +42,10 @@ class SshAssetSession:
         This is initialized separately on each call intentionally to trigger lookup for loaded keys
         """
         return AuthorizedKeys()
+
+    @property
+    def key_filter_set(self) -> SshKeyFilterSet:
+        """
+        Return new instance of SSH key filter set for filtering keys based on various arguments
+        """
+        return SshKeyFilterSet(session=self, keys=None)
