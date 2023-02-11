@@ -9,14 +9,13 @@ PIP := ${VENV_DIR}/bin/pip
 SPHINX_FLAGS := -b html ./docs public
 SPHINX_WEBSITE_FLAGS := --port 8100 --host localhost --open-browser --watch ${MODULE}
 
-all: lint unittest
+all: unittest coverage lint
 
 ${VENV_BIN}:
 	python3 -m venv ${VENV_DIR}
 	. ${VENV_BIN}/activate; pip install poetry
 	. ${VENV_BIN}/activate; poetry install
 virtualenv: ${VENV_BIN}
-
 
 clean:
 	@rm -rf build dist .DS_Store .pytest_cache .cache .eggs .coverage coverage.xml public
@@ -44,6 +43,10 @@ doc: virtualenv
 
 unittest: virtualenv
 	source ${VENV_BIN}/activate; poetry run coverage run --source "${MODULE}" --module pytest
+	source ${VENV_BIN}/activate; poetry run coverage html
+	source ${VENV_BIN}/activate; poetry run coverage report
+
+coverage:
 	source ${VENV_BIN}/activate; poetry run coverage html
 	source ${VENV_BIN}/activate; poetry run coverage report
 
