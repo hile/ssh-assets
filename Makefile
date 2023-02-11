@@ -43,8 +43,6 @@ doc: virtualenv
 
 unittest: virtualenv
 	source ${VENV_BIN}/activate; poetry run coverage run --source "${MODULE}" --module pytest
-	source ${VENV_BIN}/activate; poetry run coverage html
-	source ${VENV_BIN}/activate; poetry run coverage report
 
 coverage:
 	source ${VENV_BIN}/activate; poetry run coverage html
