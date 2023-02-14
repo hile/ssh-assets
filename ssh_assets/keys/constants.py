@@ -13,6 +13,17 @@ class KeyHashAlgorithm(Enum):
     SHA_256 = 'sha256'
 
 
+class SshKeyType(Enum):
+    """
+    Valid SSH key types
+    """
+    DSA = 'DSA'
+    DSS = 'DSS'
+    ECDSA = 'ECDSA'
+    ED25519 = 'ED25519'
+    RSA = 'RSA'
+
+
 DEFAULT_KEY_HASH_ALGORITHM = KeyHashAlgorithm.SHA_256
 
 SSH_AUTH_SOCK_ENV_VAR = 'SSH_AUTH_SOCK'

@@ -14,7 +14,7 @@ from sys_toolkit.tests.mock import MockCalledMethod, MockException, MockRunComma
 from ssh_assets.authorized_keys.public_key import PublicKey
 from ssh_assets.exceptions import SSHKeyError
 from ssh_assets.keys.base import KEY_COMPARE_ATTRIBUTES
-from ssh_assets.keys.constants import KeyHashAlgorithm
+from ssh_assets.keys.constants import KeyHashAlgorithm, SshKeyType
 from ssh_assets.keys.file import SSHKeyFile
 
 from ..conftest import FILE_NO_PERMISSION, FILE_READONLY
@@ -62,7 +62,7 @@ def test_keys_file_load(mock_test_key_file, tmpdir):
 
     for attr in KEY_COMPARE_ATTRIBUTES:
         value = getattr(obj, attr)
-        assert isinstance(value, (int, str, KeyHashAlgorithm))
+        assert isinstance(value, (int, str, KeyHashAlgorithm, SshKeyType))
 
     assert isinstance(obj.__repr__(), str)
     assert obj.__key_attributes__ != {}

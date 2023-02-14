@@ -12,6 +12,7 @@ from ..exceptions import SSHKeyError
 
 from .constants import (
     KeyHashAlgorithm,
+    SshKeyType,
     DEFAULT_KEY_HASH_ALGORITHM,
 )
 
@@ -124,7 +125,7 @@ class SSHKeyLoader(RichComparisonObject):
         """
         Return key type as string
         """
-        return self.__get_key_attribute__('key_type')
+        return SshKeyType(self.__get_key_attribute__('key_type'))
 
     @property
     def comment(self) -> str:

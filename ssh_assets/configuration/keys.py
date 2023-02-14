@@ -9,6 +9,7 @@ from sys_toolkit.configuration.base import ConfigurationList, ConfigurationSecti
 
 from .groups import GroupConfiguration, GroupListConfigurationSection
 from ..duration import Duration
+from ..exceptions import SSHKeyError
 from ..keys.agent import SshAgent
 from ..keys.file import SSHKeyFile
 
@@ -96,6 +97,22 @@ class SshKeyConfiguration(ConfigurationSection):
         return self.__parent__.__parent__.groups  # pylint: disable=no-member
 
     @property
+    def available(self) -> bool:
+        """
+        Check if this key file is available for loading to SSH agent
+        """
+        return self.path.is_file()
+
+    @property
+    def key_type(self) -> str:
+        """
+        Return key type from file details if key is available
+        """
+        if not self.path.is_file():
+            return None
+        return self.private_key.key_type
+
+    @property
     def hash_algorithm(self) -> str:
         """
         Return hash for key from file details if key is available
@@ -110,13 +127,6 @@ class SshKeyConfiguration(ConfigurationSection):
         if not self.path.is_file():
             return None
         return self.private_key.hash
-
-    @property
-    def available(self) -> bool:
-        """
-        Check if this key file is available for loading to SSH agent
-        """
-        return self.path.is_file()
 
     @property
     def loaded(self) -> bool:
@@ -153,12 +163,16 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         Unload configured key from SSH agent
         """
+        if not self.path.is_file():
+            raise SSHKeyError(f'Error unloading {self}: key file does not exist')
         self.private_key.unload_from_agent()
 
     def load_to_agent(self) -> None:
         """
         Load configured key to SSH agent
         """
+        if not self.path.is_file():
+            raise SSHKeyError(f'Error loading {self}: key file does not exist')
         self.private_key.load_to_agent(expire=self.minimum_expire)
 
     def as_dict(self) -> dict:

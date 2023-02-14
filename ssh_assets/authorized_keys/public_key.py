@@ -7,8 +7,10 @@ from typing import List, Tuple, Union
 from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
 
-from .constants import KEY_TYPES
+from .constants import SshAuthorizedKeysKeyType
 from .options import AuthorizedKeyOptionFlag, AuthorizedKeyOptionValue, parse_option_flag
+
+SSH_KEY_TYPE_STRINGS = [item.value for item in SshAuthorizedKeysKeyType]
 
 
 # pylint: disable=too-few-public-methods
@@ -66,9 +68,9 @@ class PublicKey(RichComparisonObject):
         option_fields = []
         fields = line.split(' ')
         for index, field in enumerate(fields):
-            if field in KEY_TYPES:
+            if field in SSH_KEY_TYPE_STRINGS:
                 try:
-                    key_type = field
+                    key_type = SshAuthorizedKeysKeyType(field)
                     base64 = self.__validate_base64__(fields[index + 1])
                     comment = ' '.join(fields[index + 2:])
                     break

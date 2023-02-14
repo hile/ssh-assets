@@ -1,19 +1,24 @@
 """
 Constants for OpenSSH authorized keys parsing
 """
+from enum import Enum
+
 DEFAULT_AUTHORIZED_KEYS_FILE = '~/.ssh/authorized_keys'
 
-# Valid key types in authorized_keys files
-KEY_TYPES = (
-    'ecdsa-sha2-nistp256',
-    'ecdsa-sha2-nistp384',
-    'ecdsa-sha2-nistp521',
-    'sk-ecdsa-sha2-nistp256@openssh.com',
-    'sk-ssh-ed25519@openssh.com',
-    'ssh-dss',
-    'ssh-ed25519',
-    'ssh-rsa',
-)
+
+class SshAuthorizedKeysKeyType(Enum):
+    """'
+    Valid SSH key types in authorized keys lines
+    """
+    ECDSA_NISTP_256 = 'ecdsa-sha2-nistp256'
+    ECDSA_NISTP_384 = 'ecdsa-sha2-nistp384'
+    ECDSA_NISTP_512 = 'ecdsa-sha2-nistp512'
+    SK_ECDSA_SHA2_NISTP_256 = 'sk-ecdsa-sha2-nistp256@openssh.com'
+    SK_ED25519 = 'sk-ssh-ed25519@openssh.com'
+    DSS = 'ssh-dss'
+    ED25519 = 'ssh-ed25519'
+    RSA = 'ssh-rsa'
+
 
 # Authorized keys options with no value
 AUTHRORIZED_KEYS_OPTION_FLAGS = (

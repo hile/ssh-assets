@@ -29,7 +29,7 @@ MOCK_SECOND_KEY_ATTRIBUTES = {
 
 
 # pylint: disable=too-few-public-methods
-class MockInvlidKeyClass:
+class MockInvalidKeyClass:
     """
     Mock an invalid key class with missing compare operation fields
     """
@@ -93,7 +93,7 @@ def test_ssh_key_loader_compare(tmp_path):
     """
     a = SSHKeyLoader(hash_algorithm=KeyHashAlgorithm.SHA_256)
     b = SSHKeyLoader(hash_algorithm=KeyHashAlgorithm.SHA_256)
-    invalid = MockInvlidKeyClass()
+    invalid = MockInvalidKeyClass()
 
     with pytest.raises(NotImplementedError):
         assert a == b
