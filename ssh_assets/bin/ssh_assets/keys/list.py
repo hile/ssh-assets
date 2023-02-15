@@ -46,9 +46,7 @@ class ListKeysCommand(SshKeyListCommand):
         """
         List SSH keys configred in the SSH assets configuration file
         """
-        for key in self.filter_keys(args):
-            if args.available and not key.available:
-                continue
+        for key in self.get_filter_set(args).keys:
             self.message(f'{key.name} {key.private_key}')
 
     # pylint: disable=unused-argument

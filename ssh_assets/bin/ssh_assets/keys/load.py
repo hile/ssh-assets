@@ -48,6 +48,6 @@ class LoadKeysCommand(SshKeyListCommand):
             self.session.agent.load_keys_to_agent(load_all_keys=args.all)
         else:
             self.session.agent.load_keys_to_agent(
-                keys=self.filter_keys(args),
+                keys=self.get_filter_set(args).keys,
                 load_all_keys=True
             )

@@ -2,17 +2,14 @@
 Base commands for all SSH assets CLI subcommands
 """
 from argparse import ArgumentParser, Namespace
-from typing import List
-
-from fnmatch import fnmatch
-from pathlib import Path
 
 from cli_toolkit.command import Command
 
 from ..configuration.groups import GroupListConfigurationSection
-from ..configuration.keys import SshKeyListConfigurationSection, SshKeyConfiguration
+from ..configuration.keys import SshKeyListConfigurationSection
 from ..duration import Duration
 from ..keys.agent import SshAgent
+from ..keys.filter_set import SshKeyFilterSet
 from ..session import SshAssetSession
 
 
@@ -77,66 +74,27 @@ class SshAssetsCommand(Command):
         """
         return self.session.configuration.keys  # pylint: disable=no-member
 
-    @staticmethod
-    def filter_key_groups(keys: List[SshKeyConfiguration],
-                          args: Namespace) -> List[SshKeyConfiguration]:
-        """
-        Return keys included in specified group name mathces in args.group_matches
-        """
-        def match_groups(groups: List[str], key) -> bool:
-            for group in groups:
-                if key.name in group.keys:
-                    return True
-            return False
-
-        if not args.groups:
-            return keys
-
-        matching_keys = []
-        for key in keys:
-            if match_groups(args.group_matches, key):
-                matching_keys.append(key)
-        return matching_keys
-
-    @staticmethod
-    def filter_key_names(keys: List[SshKeyConfiguration],
-                         args: Namespace) -> List[SshKeyConfiguration]:
-        """
-        Return keys matching key name list from args.keys
-        """
-        def match_keys(patterns, name):
-            """
-            Match specified key name to list of strings
-            """
-            for pattern in patterns:
-                if fnmatch(name, pattern):
-                    return True
-            return False
-
-        if not args.keys:
-            return keys
-
-        paths = [Path(arg).expanduser().resolve() for arg in args.keys]
-        matching_keys = []
-        for key in keys:
-            if match_keys(args.keys, key.name) or key.path.resolve() in paths:
-                matching_keys.append(key)
-        return matching_keys
-
-    def filter_keys(self, args: Namespace) -> List[SshKeyConfiguration]:
+    def get_filter_set(self, args: Namespace) -> SshKeyFilterSet:
         """
         Return keys matching specified arguments
         """
-        filter_methdos = (
-            self.filter_key_groups,
-            self.filter_key_names,
-        )
-        keys = self.keys
-        for method in filter_methdos:
-            keys = method(keys, args)
-        if not keys:
+        filter_set = self.session.key_filter_set
+        if 'keys' in args and args.keys:
+            filter_set = filter_set.filter_names(args.keys)
+
+        if 'groups' in args and args.groups:
+            filter_set = filter_set.filter_groups(args.groups)
+
+        if 'available' in args and args.available:
+            filter_set = filter_set.filter_available(args.available)
+
+        if 'loaded' in args and args.loaded:
+            filter_set = filter_set.filter_loaded(args.loaded)
+
+        if not filter_set.keys:
             if not args.groups and not args.keys:
                 self.exit(1, 'No keys are configured in the SSH assets configuration file')
             else:
                 self.exit(1, 'No keys matching query arguments detected')
-        return keys
+
+        return filter_set

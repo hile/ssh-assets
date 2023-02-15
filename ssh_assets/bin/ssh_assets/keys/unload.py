@@ -46,6 +46,6 @@ class UnLoadKeysCommand(SshKeyListCommand):
             self.session.agent.unload_keys_from_agent(unload_all_keys=True)
         else:
             self.session.agent.unload_keys_from_agent(
-                keys=self.filter_keys(args),
+                keys=self.get_filter_set(args).keys,
                 unload_all_keys=False
             )
