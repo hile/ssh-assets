@@ -15,11 +15,30 @@ from ssh_assets.session import SshAssetSession
 
 
 # pylint: disable=unused-argument
+def test_keys_identity_parameters(
+        mock_basic_config,
+        mock_agent_key_list,
+        mock_test_key_file,
+        monkeypatch) -> None:
+    """
+    Test getting the identity parameters of keys loaded to the agent
+    """
+    session = SshAssetSession()
+    for key in session.configuration.keys.available:
+        identity_parameters = key.identity_parameters
+        # Name and key type are added to defaults
+        assert len(identity_parameters) > 0
+        for attr in identity_parameters:
+            print(key, attr)
+            assert isinstance(attr, str)
+
+
+# pylint: disable=unused-argument
 def test_keys_file_load_available_all_keys_to_agent(
         mock_basic_config,
         mock_agent_key_list,
         mock_test_key_file,
-        monkeypatch):
+        monkeypatch) -> None:
     """
     Test call to load SSH keys to agent, with autoload marked for available keys only
     """
@@ -27,7 +46,6 @@ def test_keys_file_load_available_all_keys_to_agent(
     monkeypatch.setattr('ssh_assets.keys.file.run_command', mock_load)
     session = SshAssetSession()
 
-    # pylint: disable=no-member
     assert len(session.configuration.keys.pending) == 0
     session.agent.load_keys_to_agent()
     assert mock_load.call_count == 0
@@ -37,7 +55,7 @@ def test_keys_file_load_available_all_keys_to_agent(
 
 
 # pylint: disable=unused-argument
-def test_keys_configured_load_to_agent(mock_basic_config, mock_agent_no_keys, monkeypatch):
+def test_keys_configured_load_to_agent(mock_basic_config, mock_agent_no_keys, monkeypatch) -> None:
     """
     Load configured test key to agent
     """
@@ -45,7 +63,6 @@ def test_keys_configured_load_to_agent(mock_basic_config, mock_agent_no_keys, mo
     monkeypatch.setattr('ssh_assets.keys.file.SSHKeyFile.load_to_agent', mock_load)
     session = SshAssetSession()
 
-    # pylint: disable=no-member
     key = session.configuration.keys[0]
     assert key.available is True
     assert key.loaded is False
@@ -55,7 +72,7 @@ def test_keys_configured_load_to_agent(mock_basic_config, mock_agent_no_keys, mo
 
 
 # pylint: disable=unused-argument
-def test_keys_configured_unload_from_agent(mock_basic_config, mock_agent_key_list, monkeypatch):
+def test_keys_configured_unload_from_agent(mock_basic_config, mock_agent_key_list, monkeypatch) -> None:
     """
     Load configured test key to agent
     """
@@ -63,7 +80,6 @@ def test_keys_configured_unload_from_agent(mock_basic_config, mock_agent_key_lis
     monkeypatch.setattr('ssh_assets.keys.file.SSHKeyFile.unload_from_agent', mock_unload)
     session = SshAssetSession()
 
-    # pylint: disable=no-member
     key = session.configuration.keys[0]
     assert key.available is True
     assert key.loaded is True
@@ -73,7 +89,7 @@ def test_keys_configured_unload_from_agent(mock_basic_config, mock_agent_key_lis
 
 
 # pylint: disable=unused-argument
-def test_keys_available_key_type(mock_basic_config, mock_agent_key_list, monkeypatch):
+def test_keys_available_key_type(mock_basic_config, mock_agent_key_list, monkeypatch) -> None:
     """
     Test looking up key type for unavailable key
     """
@@ -82,7 +98,7 @@ def test_keys_available_key_type(mock_basic_config, mock_agent_key_list, monkeyp
 
 
 # pylint: disable=unused-argument
-def test_keys_unavailable_key_type(mock_basic_config, mock_agent_key_list, monkeypatch):
+def test_keys_unavailable_key_type(mock_basic_config, mock_agent_key_list, monkeypatch) -> None:
     """
     Test looking up key type for unavailable key
     """
@@ -91,7 +107,7 @@ def test_keys_unavailable_key_type(mock_basic_config, mock_agent_key_list, monke
 
 
 # pylint: disable=unused-argument
-def test_keys_unavailable_load_to_agent(mock_basic_config, mock_agent_key_list, monkeypatch):
+def test_keys_unavailable_load_to_agent(mock_basic_config, mock_agent_key_list, monkeypatch) -> None:
     """
     Load unavailable test key to agent
     """
@@ -103,7 +119,7 @@ def test_keys_unavailable_load_to_agent(mock_basic_config, mock_agent_key_list, 
 
 
 # pylint: disable=unused-argument
-def test_keys_unavailable_unload_from_agent(mock_basic_config, mock_agent_key_list, monkeypatch):
+def test_keys_unavailable_unload_from_agent(mock_basic_config, mock_agent_key_list, monkeypatch) -> None:
     """
     Unload unavailable test key from agent
     """

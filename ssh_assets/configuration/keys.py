@@ -97,6 +97,17 @@ class SshKeyConfiguration(ConfigurationSection):
         return self.__parent__.__parent__.groups  # pylint: disable=no-member
 
     @property
+    def identity_parameters(self) -> List[str]:
+        """
+        Return identity parameter values that can be used to match this key
+        """
+        parameters = []
+        parameters.append(self.name)
+        parameters.append(self.hash_algorithm.value)
+        parameters.extend(self.private_key.identity_parameters)
+        return list(set(parameters))
+
+    @property
     def available(self) -> bool:
         """
         Check if this key file is available for loading to SSH agent

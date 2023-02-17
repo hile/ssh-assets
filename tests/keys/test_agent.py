@@ -10,6 +10,7 @@ from sys_toolkit.tests.mock import MockCalledMethod, MockException
 from ssh_assets.exceptions import SSHKeyError
 from ssh_assets.session import SshAssetSession
 from ssh_assets.keys.agent import AgentKey
+from ssh_assets.keys.constants import AGENT_KEY_IDENTITY_ATTRIBUTES
 
 from ..utils import validate_key
 
@@ -21,6 +22,19 @@ def test_ssh_agent_keys_attributes(mock_agent_no_keys):
     """
     session = SshAssetSession()
     assert session.agent.__items__ == []
+
+
+def test_ssh_agent_keys_identity_parameters(mock_basic_config, mock_agent_key_list):
+    """
+    Test getting the identity parameters of keys loaded to the agent
+    """
+    session = SshAssetSession()
+    assert len(session.agent) == len(mock_agent_key_list)
+    for key in session.agent:
+        identity_parameters = key.identity_parameters
+        assert len(identity_parameters) == len(AGENT_KEY_IDENTITY_ATTRIBUTES)
+        for attr in identity_parameters:
+            assert isinstance(attr, str)
 
 
 # pylint: disable=unused-argument

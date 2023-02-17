@@ -7,6 +7,7 @@ from cli_toolkit.command import Command
 
 from ..configuration.groups import GroupListConfigurationSection
 from ..configuration.keys import SshKeyListConfigurationSection
+from ..constants import NO_KEYS_CONFIGURED, NO_KEYS_MATCH
 from ..duration import Duration
 from ..keys.agent import SshAgent
 from ..keys.filter_set import SshKeyFilterSet
@@ -88,13 +89,10 @@ class SshAssetsCommand(Command):
         if 'available' in args and args.available:
             filter_set = filter_set.filter_available(args.available)
 
-        if 'loaded' in args and args.loaded:
-            filter_set = filter_set.filter_loaded(args.loaded)
-
         if not filter_set.keys:
             if not args.groups and not args.keys:
-                self.exit(1, 'No keys are configured in the SSH assets configuration file')
+                self.exit(1, NO_KEYS_CONFIGURED)
             else:
-                self.exit(1, 'No keys matching query arguments detected')
+                self.exit(1, NO_KEYS_MATCH)
 
         return filter_set

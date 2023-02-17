@@ -1,6 +1,7 @@
 """
 CLI 'ssh-assets keys list'
 """
+import itertools
 from argparse import ArgumentParser, Namespace
 
 from ssh_assets.constants import USER_CONFIGURATION_FILE
@@ -31,36 +32,64 @@ class ListKeysCommand(SshKeyListCommand):
         """
         parser = super().register_parser_arguments(parser)
         parser.add_argument(
-            '-c', '--configured',
+            '--autocomplete',
             action='store_true',
-            help='List configured SSH keys'
+            help='Show each key details as autocomplete parameters'
         )
         parser.add_argument(
             '-a', '--available',
             action='store_true',
-            help='List configured and available SSH keys'
+            help='List available SSH keys'
+        )
+
+        parser.add_argument(
+            '-l', '--loaded',
+            action='store_true',
+            help='List loaded SSH keys'
         )
         return parser
 
-    def list_configured_keys(self, args: Namespace):
+    def list_agent_key_identity_parameters(self) -> None:
         """
-        List SSH keys configred in the SSH assets configuration file
+        List autocomplete parameters for keys loaded in ssh-agent
         """
-        for key in self.get_filter_set(args).keys:
-            self.message(f'{key.name} {key.private_key}')
+        parameters = sorted(set(itertools.chain(*[key.identity_parameters for key in self.agent])))
+        for parameter in parameters:
+            self.message(parameter)
 
-    # pylint: disable=unused-argument
-    def list_ssh_agent_keys(self, args: Namespace):
+    def list_key_identity_parameters(self, keys) -> None:
         """
-        List SSH keys configered to the agent
+        List autocomplete parameters for keys from ssh-assets configuration
         """
-        for key in self.agent:
-            self.message(key)
+        parameters = sorted(set(itertools.chain(*[key.identity_parameters for key in keys])))
+        for parameter in parameters:
+            self.message(parameter)
+
+    def list_agent_keys(self, args: Namespace) -> None:
+        """
+        List keys loaded to ssh agent
+        """
+        if args.autocomplete:
+            self.list_agent_key_identity_parameters()
+        else:
+            for key in self.agent:
+                self.message(key)
+
+    def list_keys(self, args: Namespace) -> None:
+        """
+        List keys in ssh-assets configuration
+        """
+        keys = self.get_filter_set(args).keys
+        if args.autocomplete:
+            self.list_key_identity_parameters(keys)
+        else:
+            for key in keys:
+                self.message(f'{key.name} {key.private_key}')
 
     def run(self, args: Namespace) -> None:
         """
         List the keys in asset configuration file or in the SSH agent
         """
-        if args.configured or args.available:
-            return self.list_configured_keys(args)
-        return self.list_ssh_agent_keys(args)
+        if args.loaded:
+            return self.list_agent_keys(args)
+        return self.list_keys(args)

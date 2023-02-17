@@ -5,7 +5,7 @@ Base classes for SSH key file processing
 import re
 
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any, Callable, List
 
 from ..base import RichComparisonObject
 from ..exceptions import SSHKeyError
@@ -46,6 +46,7 @@ class SSHKeyLoader(RichComparisonObject):
     __key_attributes__: dict
 
     __compare_attributes__ = KEY_COMPARE_ATTRIBUTES
+    __identity_attributes__ = ()
 
     def __init__(self, hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:
         if not isinstance(hash_algorithm, KeyHashAlgorithm):
@@ -105,6 +106,19 @@ class SSHKeyLoader(RichComparisonObject):
             return self.__key_attributes__[attr]
         except KeyError as error:
             raise SSHKeyError(f'Unexpected SSH key attribute: {attr}') from error
+
+    @property
+    def identity_parameters(self) -> List[str]:
+        """
+        Return identity parameter values that can be used to match this key
+        """
+        parameters = []
+        for attr in self.__identity_attributes__:
+            value = getattr(self, attr, '')
+            if isinstance(value, (SshKeyType,)):
+                value = value.value
+            parameters.append(str(value))
+        return parameters
 
     @property
     def bits(self) -> int:

@@ -25,6 +25,8 @@ class SshAssetsConfiguration(YamlConfiguration):
 
     User configuration for ssh assets processing python module
     """
+    groups: GroupListConfigurationSection
+    keys: SshKeyListConfigurationSection
     __section_loaders__ = (
         GroupListConfigurationSection,
         SshKeyListConfigurationSection,

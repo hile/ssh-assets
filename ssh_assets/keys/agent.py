@@ -16,6 +16,7 @@ from ..exceptions import SSHKeyError
 
 from .base import SSHKeyLoader
 from .constants import (
+    AGENT_KEY_IDENTITY_ATTRIBUTES,
     DEFAULT_KEY_HASH_ALGORITHM,
     SSH_AUTH_SOCK_ENV_VAR,
     SSH_AGENT_NO_KEYS_MESSAGE,
@@ -30,6 +31,7 @@ class AgentKey(SSHKeyLoader):
     SSH key details from SSH agent key listing
     """
     line: str
+    __identity_attributes__ = AGENT_KEY_IDENTITY_ATTRIBUTES
 
     def __init__(self, line: str, hash_algorithm: str):
         super().__init__(hash_algorithm)

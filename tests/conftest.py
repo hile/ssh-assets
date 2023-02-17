@@ -33,6 +33,7 @@ MOCK_BASIC_CONFIG_EXISTING_GROUP_KEY_COUNT = 2
 
 MOCK_AGENT_OUTPUT = MOCK_DATA.joinpath('keys/agent.txt')
 MOCK_TEST_KEYS = MOCK_DATA.glob('keys/*/ssh_key_*')
+#  Number of keys loaded with mock_agent_key_list
 MOCK_AGENT_KEY_COUNT = 12
 
 MOCK_UNKNOWN_GROUP_NAME = 'nosuchgroup'
