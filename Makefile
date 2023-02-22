@@ -25,9 +25,6 @@ clean:
 	@find . -name '*.tox' -print0 | xargs -0r rm -rf
 	@find . -name 'htmlcov' -print0 | xargs -0r rm -rf
 
-distclean: clean
-	@rm -rf "${VENV_DIR}"
-
 build: virtualenv
 	source ${VENV_BIN}/activate; poetry build
 
@@ -42,19 +39,19 @@ doc: virtualenv
 	source ${VENV_BIN}/activate; sphinx-build ${SPHINX_FLAGS}
 
 unittest: virtualenv
-	source ${VENV_BIN}/activate; poetry run coverage run --source "${MODULE}" --module pytest
+	source ${VENV_BIN}/activate && poetry run coverage run --source "${MODULE}" --module pytest
 
-coverage:
-	source ${VENV_BIN}/activate; poetry run coverage html
-	source ${VENV_BIN}/activate; poetry run coverage report
+coverage: virtualenv
+	source ${VENV_BIN}/activate && poetry run coverage html
+	source ${VENV_BIN}/activate && poetry run coverage report
 
 lint: virtualenv
-	source ${VENV_BIN}/activate; poetry run flake8
-	source ${VENV_BIN}/activate; poetry run pycodestyle "${MODULE}" tests
-	source ${VENV_BIN}/activate; poetry run pylint "${MODULE}" tests
+	source ${VENV_BIN}/activate && poetry run flake8
+	source ${VENV_BIN}/activate && poetry run pycodestyle "${MODULE}" tests
+	source ${VENV_BIN}/activate && poetry run pylint "${MODULE}" tests
 
 publish: virtualenv clean build
-	source ${VENV_BIN}/activate; poetry publish
+	source ${VENV_BIN}/activate && poetry publish
 
 tag-release:
 	git tag --annotate ${VERSION} --message "Publish release ${VERSION}"
