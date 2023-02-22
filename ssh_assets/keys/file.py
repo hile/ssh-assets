@@ -10,7 +10,7 @@ from sys_toolkit.subprocess import run_command, run_command_lineoutput
 from ..authorized_keys.public_key import PublicKey
 from ..exceptions import SSHKeyError
 from .base import SSHKeyLoader
-from .constants import DEFAULT_KEY_HASH_ALGORITHM, SSH_KEY_IDENTITY_ATTRIBUTES
+from .constants import DEFAULT_KEY_HASH_ALGORITHM
 
 
 class SSHKeyFile(SSHKeyLoader):
@@ -18,8 +18,6 @@ class SSHKeyFile(SSHKeyLoader):
 
     Base class for SSH private and public keys based on text files
     """
-    __identity_attributes__ = SSH_KEY_IDENTITY_ATTRIBUTES
-
     def __init__(self, path: str, hash_algorithm: str = DEFAULT_KEY_HASH_ALGORITHM) -> None:
         super().__init__(hash_algorithm)
         self.path = Path(path).expanduser().resolve()

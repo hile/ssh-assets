@@ -33,8 +33,3 @@ AGENT_KEY_IDENTITY_ATTRIBUTES = (
     'comment',
     'hash',
 )
-SSH_KEY_IDENTITY_ATTRIBUTES = (
-    'comment',
-    'hash',
-    'key_type',
-)

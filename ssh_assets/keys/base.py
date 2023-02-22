@@ -114,10 +114,7 @@ class SSHKeyLoader(RichComparisonObject):
         """
         parameters = []
         for attr in self.__identity_attributes__:
-            value = getattr(self, attr, '')
-            if isinstance(value, (SshKeyType,)):
-                value = value.value
-            parameters.append(str(value))
+            parameters.append(str(getattr(self, attr, '')))
         return parameters
 
     @property

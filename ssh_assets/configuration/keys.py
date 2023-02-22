@@ -101,11 +101,7 @@ class SshKeyConfiguration(ConfigurationSection):
         """
         Return identity parameter values that can be used to match this key
         """
-        parameters = []
-        parameters.append(self.name)
-        parameters.append(self.hash_algorithm.value)
-        parameters.extend(self.private_key.identity_parameters)
-        return list(set(parameters))
+        return [self.name]
 
     @property
     def available(self) -> bool:
