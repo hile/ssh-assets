@@ -1,14 +1,14 @@
 [tool.poetry]
 name = "ssh_assets"
-version = "1.7.0"
+version = "1.7.1"
 description = "SSH asset and key management tools"
-homepage = "https://github.com/hile/ssh-assets"
 authors = ["Ilkka Tuohela <hile@iki.fi>"]
+homepage = "https://github.com/hile/ssh-assets"
 readme = "README.md"
 include = [
     "LICENSE",
 ]
-license = "BSD"
+license = "BSD-3-Clause"
 classifiers = [
     "Environment :: Console",
     "License :: OSI Approved :: BSD License",
