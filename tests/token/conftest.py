@@ -1,7 +1,11 @@
+#
+# Copyright (C) 2020-2023 by Ilkka Tuohela <hile@iki.fi>
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 """
 Pytest fixtures for the ssh_agents.token unit tests
 """
-
 import pytest
 
 from ssh_assets.token.client import CLIENT_CONFIG_TOKEN_STRING_CLASSES

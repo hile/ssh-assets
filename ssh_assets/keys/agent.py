@@ -1,9 +1,13 @@
+#
+# Copyright (C) 2020-2023 by Ilkka Tuohela <hile@iki.fi>
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 """
 SSH agent client
 
 Allows listing, loading and flushing SSH keys loaded to SSH agent
 """
-
 import os
 from pathlib import Path
 from typing import List, Optional, TYPE_CHECKING

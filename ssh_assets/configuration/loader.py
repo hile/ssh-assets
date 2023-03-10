@@ -1,7 +1,11 @@
+#
+# Copyright (C) 2020-2023 by Ilkka Tuohela <hile@iki.fi>
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 """
 Configuration file processing for SSH assets utility
 """
-
 from pathlib import Path
 from typing import Optional, TYPE_CHECKING
 

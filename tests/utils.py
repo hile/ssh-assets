@@ -1,7 +1,11 @@
+#
+# Copyright (C) 2020-2023 by Ilkka Tuohela <hile@iki.fi>
+#
+# SPDX-License-Identifier: BSD-3-Clause
+#
 """
 Unit test utility methods for ssh_assets.keys module
 """
-
 from ssh_assets.keys.base import (
     KEY_COMPARE_ATTRIBUTES,
     KEY_INTEGER_ATTRIBUTES,
