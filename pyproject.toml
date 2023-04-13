@@ -44,5 +44,5 @@ ssh-assets = "ssh_assets.bin.ssh_assets.main:main"
 line-length = 120
 
 [build-system]
-requires = ["poetry-core>=1.3.2"]
+requires = ["poetry-core>=1.5.2"]
 build-backend = "poetry.core.masonry.api"
