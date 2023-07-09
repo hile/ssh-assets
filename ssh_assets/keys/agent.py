@@ -37,7 +37,7 @@ class AgentKey(SSHKeyLoader):
     line: str
     __identity_attributes__ = AGENT_KEY_IDENTITY_ATTRIBUTES
 
-    def __init__(self, line: str, hash_algorithm: str):
+    def __init__(self, line: str, hash_algorithm: str) -> None:
         super().__init__(hash_algorithm)
         self.line = line
         self.__parse_key_info_line__(line)

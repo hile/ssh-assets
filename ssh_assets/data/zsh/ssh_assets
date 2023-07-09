@@ -1,0 +1,19 @@
+#compdef _ssh_assets ssh-assets
+
+function _ssh_assets {
+    local line
+
+    _arguments -C \
+        "-h[Show help information]" \
+        "--help[Show help information]" \
+        "1: :(groups keys)" \
+        "*::arg:->args"
+
+    case "${line[1]}" in
+        groups)
+            ;;
+        keys)
+            ;;
+    esac
+}
+autoload -Uk _ssh_assets
